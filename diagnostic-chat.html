@@ -4,21 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Equipment Diagnostic Chat | Sebastian Leal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --navy:       #050d1a;
-      --navy-mid:   #081422;
-      --navy-light: #0d1f38;
-      --blue:       #0ea5e9;
-      --blue-bright:#38bdf8;
-      --white:      #eef4ff;
-      --gray:       #7a93b8;
-      --gray-light: #bdd0ea;
+      --navy:       #0a0a0c;
+      --navy-mid:   #131316;
+      --navy-light: #1c1c21;
+      --blue:       #14b8a6;
+      --blue-bright:#2dd4bf;
+      --white:      #ededf0;
+      --gray:       #85858f;
+      --gray-light: #b8b8c2;
       --green:      #4ade80;
-      --user-bg:    #0e2a4a;
-      --ai-bg:      #081422;
+      --user-bg:    #1a2028;
+      --ai-bg:      #131316;
     }
 
     html { scroll-behavior: smooth; }
@@ -35,9 +38,9 @@
 
     /* ─── NAV ─────────────────────────────── */
     nav {
-      background: rgba(5,13,26,0.95);
+      background: rgba(10,10,12,0.95);
       backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(14,165,233,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
       padding: 0.85rem 2rem;
       display: flex;
       justify-content: space-between;
@@ -66,7 +69,7 @@
       width: 280px;
       flex-shrink: 0;
       background: var(--navy-mid);
-      border-right: 1px solid rgba(14,165,233,0.08);
+      border-right: 1px solid rgba(255,255,255,0.06);
       padding: 1.5rem;
       overflow-y: auto;
       display: flex;
@@ -97,8 +100,8 @@
     .api-row { display: flex; gap: 0.4rem; align-items: center; }
     .api-row input {
       flex: 1;
-      background: rgba(5,13,26,0.8);
-      border: 1px solid rgba(14,165,233,0.15);
+      background: rgba(10,10,12,0.8);
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 0.4rem;
       color: var(--white);
       font-family: inherit;
@@ -132,8 +135,8 @@
     }
     .eq-group select {
       width: 100%;
-      background: rgba(5,13,26,0.8);
-      border: 1px solid rgba(14,165,233,0.15);
+      background: rgba(10,10,12,0.8);
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 0.4rem;
       color: var(--white);
       font-family: inherit;
@@ -144,7 +147,7 @@
       transition: border-color 0.2s;
     }
     .eq-group select:focus { border-color: var(--blue); }
-    .eq-group select option { background: #0d1f38; }
+    .eq-group select option { background: #1c1c21; }
 
     /* Quick prompts */
     .quick-label {
@@ -156,8 +159,8 @@
     }
     .quick-btns { display: flex; flex-direction: column; gap: 0.4rem; }
     .quick-btn {
-      background: rgba(14,165,233,0.06);
-      border: 1px solid rgba(14,165,233,0.12);
+      background: rgba(45,212,191,0.06);
+      border: 1px solid rgba(45,212,191,0.12);
       border-radius: 0.4rem;
       color: var(--gray-light);
       font-size: 0.78rem;
@@ -168,16 +171,16 @@
       font-family: inherit;
     }
     .quick-btn:hover {
-      background: rgba(14,165,233,0.12);
-      border-color: rgba(14,165,233,0.25);
+      background: rgba(45,212,191,0.12);
+      border-color: rgba(45,212,191,0.25);
       color: var(--white);
     }
 
     /* Demo button */
     .example-demo-btn {
       width: 100%;
-      background: rgba(14,165,233,0.1);
-      border: 1px solid rgba(14,165,233,0.25);
+      background: rgba(45,212,191,0.1);
+      border: 1px solid rgba(45,212,191,0.25);
       border-radius: 0.4rem;
       color: var(--blue-bright);
       font-size: 0.8rem;
@@ -187,15 +190,15 @@
       font-family: inherit;
       transition: all 0.2s;
     }
-    .example-demo-btn:hover { background: rgba(14,165,233,0.2); transform: translateY(-1px); }
+    .example-demo-btn:hover { background: rgba(45,212,191,0.2); transform: translateY(-1px); }
 
     /* Demo badge in messages */
     .demo-notice {
       text-align: center;
       font-size: 0.75rem;
       color: var(--blue);
-      background: rgba(14,165,233,0.06);
-      border: 1px solid rgba(14,165,233,0.15);
+      background: rgba(45,212,191,0.06);
+      border: 1px solid rgba(45,212,191,0.15);
       border-radius: 0.4rem;
       padding: 0.5rem 1rem;
       margin: 0.5rem auto;
@@ -268,7 +271,7 @@
       margin-top: 0.1rem;
     }
     .msg.user .msg-avatar     { background: var(--blue); color: #fff; font-weight: 700; font-size: 0.75rem; }
-    .msg.assistant .msg-avatar { background: rgba(14,165,233,0.12); border: 1px solid rgba(14,165,233,0.2); }
+    .msg.assistant .msg-avatar { background: rgba(45,212,191,0.12); border: 1px solid rgba(45,212,191,0.2); }
 
     .msg-bubble {
       padding: 0.85rem 1.1rem;
@@ -279,13 +282,13 @@
     }
     .msg.user .msg-bubble {
       background: var(--user-bg);
-      border: 1px solid rgba(14,165,233,0.2);
+      border: 1px solid rgba(255,255,255,0.1);
       border-top-right-radius: 0.25rem;
       color: var(--white);
     }
     .msg.assistant .msg-bubble {
       background: var(--ai-bg);
-      border: 1px solid rgba(14,165,233,0.08);
+      border: 1px solid rgba(255,255,255,0.06);
       border-top-left-radius: 0.25rem;
       color: var(--gray-light);
     }
@@ -331,7 +334,7 @@
     /* ─── INPUT BAR ───────────────────────── */
     .input-bar {
       padding: 1rem 1.5rem;
-      border-top: 1px solid rgba(14,165,233,0.08);
+      border-top: 1px solid rgba(255,255,255,0.06);
       background: var(--navy-mid);
     }
     .input-row {
@@ -343,8 +346,8 @@
     }
     .input-row textarea {
       flex: 1;
-      background: rgba(5,13,26,0.7);
-      border: 1px solid rgba(14,165,233,0.15);
+      background: rgba(10,10,12,0.7);
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 0.6rem;
       color: var(--white);
       font-family: inherit;
@@ -362,10 +365,10 @@
 
     .send-btn {
       width: 44px; height: 44px;
-      background: var(--blue);
+      background: var(--blue-bright);
       border: none;
       border-radius: 0.6rem;
-      color: #fff;
+      color: #0a0a0c;
       font-size: 1.1rem;
       cursor: pointer;
       transition: all 0.2s;
@@ -374,8 +377,8 @@
       justify-content: center;
       flex-shrink: 0;
     }
-    .send-btn:hover:not(:disabled) { background: var(--blue-bright); transform: scale(1.05); }
-    .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .send-btn:hover:not(:disabled) { opacity: 0.88; transform: scale(1.04); }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
     .input-hint {
       text-align: center;
@@ -455,7 +458,7 @@
       </div>
     </div>
 
-    <div style="border-top:1px solid rgba(14,165,233,0.08);padding-top:1rem;">
+    <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:1rem;">
       <span class="quick-label">No API Key?</span>
       <button class="example-demo-btn" onclick="loadDemoConversation()">✦ Load Demo Conversation</button>
       <p style="font-size:0.72rem;color:var(--gray);margin-top:0.5rem;line-height:1.5;">See a full realistic diagnostic session — no API key needed.</p>
