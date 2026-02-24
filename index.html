@@ -16,11 +16,9 @@
       --navy-light:  #1c1c21;
       --blue:        #14b8a6;
       --blue-bright: #2dd4bf;
-      --indigo:      #2dd4bf;
       --white:       #ededf0;
       --gray:        #85858f;
       --gray-light:  #b8b8c2;
-      --grad:        #2dd4bf;
     }
 
     html { scroll-behavior: smooth; }
@@ -39,10 +37,7 @@
       transform: translateY(28px);
       transition: opacity 0.65s ease, transform 0.65s ease;
     }
-    .reveal.visible {
-      opacity: 1;
-      transform: none;
-    }
+    .reveal.visible { opacity: 1; transform: none; }
     .reveal-delay-1 { transition-delay: 0.1s; }
     .reveal-delay-2 { transition-delay: 0.2s; }
     .reveal-delay-3 { transition-delay: 0.3s; }
@@ -52,7 +47,7 @@
       position: fixed;
       top: 0; width: 100%;
       z-index: 100;
-      background: rgba(10, 10, 12, 0.88);
+      background: rgba(10,10,12,0.88);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -60,7 +55,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: background 0.3s;
     }
     .nav-logo {
       font-size: 1.1rem;
@@ -69,9 +63,7 @@
       color: var(--white);
       text-decoration: none;
     }
-    .nav-logo span {
-      color: var(--blue-bright);
-    }
+    .nav-logo span { color: var(--blue-bright); }
     .nav-links {
       display: flex;
       gap: 2.5rem;
@@ -87,15 +79,14 @@
     }
     .nav-links a:hover { color: var(--white); }
     .nav-cta {
-      background: var(--blue-bright);
+      background: var(--blue-bright) !important;
       color: #0a0a0c !important;
       padding: 0.45rem 1.1rem;
       border-radius: 0.4rem;
       font-weight: 600 !important;
       font-size: 0.82rem !important;
-      transition: opacity 0.2s, transform 0.2s !important;
     }
-    .nav-cta:hover { opacity: 0.88; transform: translateY(-1px); color: #0a0a0c !important; }
+    .nav-cta:hover { opacity: 0.88; }
 
     /* ─── HERO ────────────────────────────── */
     .hero {
@@ -104,11 +95,61 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 7rem 2rem 5rem;
+      padding: 5rem 2rem 4rem;
       position: relative;
       overflow: hidden;
     }
 
+    /* Animated orbs */
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .orb-1 {
+      width: 700px; height: 700px;
+      background: radial-gradient(circle at center, rgba(45,212,191,0.14) 0%, transparent 65%);
+      top: -220px; left: -200px;
+      animation: orbFloat1 14s ease-in-out infinite;
+    }
+    .orb-2 {
+      width: 560px; height: 560px;
+      background: radial-gradient(circle at center, rgba(20,184,166,0.10) 0%, transparent 65%);
+      bottom: -140px; right: -160px;
+      animation: orbFloat2 18s ease-in-out infinite;
+    }
+    .orb-3 {
+      width: 320px; height: 320px;
+      background: radial-gradient(circle at center, rgba(45,212,191,0.07) 0%, transparent 70%);
+      top: 55%; left: 55%;
+      transform: translate(-50%, -50%);
+      animation: orbFloat3 11s ease-in-out infinite;
+    }
+    @keyframes orbFloat1 {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      33%       { transform: translate(50px,-40px) scale(1.06); }
+      66%       { transform: translate(-25px,45px) scale(0.96); }
+    }
+    @keyframes orbFloat2 {
+      0%, 100% { transform: translate(0,0); }
+      50%       { transform: translate(-35px,-45px); }
+    }
+    @keyframes orbFloat3 {
+      0%, 100% { transform: translate(-50%,-50%) scale(1); opacity: 0.5; }
+      50%       { transform: translate(-50%,-50%) scale(1.3); opacity: 1; }
+    }
+
+    /* Subtle grid overlay */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(45,212,191,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(45,212,191,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
 
     .hero-content {
       position: relative;
@@ -121,7 +162,7 @@
       align-items: center;
       gap: 0.5rem;
       background: rgba(45,212,191,0.08);
-      border: 1px solid rgba(45,212,191,0.22);
+      border: 1px solid rgba(45,212,191,0.25);
       color: var(--blue-bright);
       font-size: 0.72rem;
       font-weight: 700;
@@ -131,6 +172,17 @@
       border-radius: 100px;
       margin-bottom: 2rem;
     }
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--blue-bright);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(1.4); }
+    }
 
     .hero h1 {
       font-size: clamp(2.6rem, 6vw, 4.8rem);
@@ -139,9 +191,8 @@
       line-height: 1.08;
       margin-bottom: 1.5rem;
     }
-    .hero h1 .name {
-      color: var(--blue-bright);
-    }
+    .hero h1 .name { color: var(--blue-bright); }
+
     .hero p {
       font-size: 1.15rem;
       color: var(--gray-light);
@@ -181,19 +232,14 @@
       font-weight: 500;
       white-space: nowrap;
     }
-    .stat-item:not(:last-child) {
-      border-right: 1px solid rgba(255,255,255,0.07);
-    }
+    .stat-item:not(:last-child) { border-right: 1px solid rgba(255,255,255,0.07); }
     .stat-dot {
       width: 7px; height: 7px;
       border-radius: 50%;
-      background: var(--grad);
+      background: var(--blue-bright);
       flex-shrink: 0;
     }
-    .stat-val {
-      color: var(--white);
-      font-weight: 700;
-    }
+    .stat-val { color: var(--white); font-weight: 700; }
 
     /* ─── BUTTONS ─────────────────────────── */
     .btn {
@@ -213,18 +259,17 @@
     .btn-primary {
       background: var(--blue-bright);
       color: #0a0a0c;
-      box-shadow: 0 2px 12px rgba(45,212,191,0.15);
+      box-shadow: 0 2px 16px rgba(45,212,191,0.18);
     }
     .btn-primary:hover {
       background: #5eead4;
       transform: translateY(-1px);
-      box-shadow: 0 4px 20px rgba(45,212,191,0.25);
+      box-shadow: 0 6px 24px rgba(45,212,191,0.28);
     }
     .btn-outline {
       background: rgba(255,255,255,0.05);
       color: var(--white);
       border: 1px solid rgba(255,255,255,0.14);
-      backdrop-filter: blur(8px);
     }
     .btn-outline:hover {
       background: rgba(255,255,255,0.09);
@@ -250,7 +295,7 @@
     .section-label::before {
       content: '';
       width: 20px; height: 2px;
-      background: var(--grad);
+      background: var(--blue-bright);
       border-radius: 2px;
     }
     .section-title {
@@ -289,21 +334,19 @@
       border: 1px solid rgba(255,255,255,0.06);
       border-left: 2px solid var(--blue-bright);
       border-radius: 0.5rem;
-      transition: background 0.2s;
+      transition: background 0.2s, border-color 0.2s;
     }
-    .pain-points li:hover {
-      background: rgba(45,212,191,0.05);
-    }
+    .pain-points li:hover { background: rgba(45,212,191,0.04); }
     .pain-icon {
-      font-size: 1.25rem;
       flex-shrink: 0;
-      margin-top: 0.05rem;
       width: 36px; height: 36px;
       background: rgba(45,212,191,0.08);
+      border: 1px solid rgba(45,212,191,0.15);
       border-radius: 0.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: var(--blue-bright);
     }
     .pain-points li strong {
       display: block;
@@ -324,25 +367,178 @@
     .demo-card {
       background: var(--navy-light);
       border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 0.75rem;
-      padding: 2rem;
-      transition: transform 0.25s, border-color 0.25s;
+      border-radius: 0.9rem;
+      overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
     }
     .demo-card:hover {
-      border-color: rgba(45,212,191,0.2);
-      transform: translateY(-3px);
+      border-color: rgba(45,212,191,0.22);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+    }
+    .demo-card-body { padding: 1.75rem 2rem 2rem; }
+
+    /* Mini mockup previews */
+    .card-preview {
+      height: 148px;
+      background: #0d0d10;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 1rem 1.25rem;
+      overflow: hidden;
+      position: relative;
+    }
+    .card-preview::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 48px;
+      background: linear-gradient(transparent, #0d0d10);
+      pointer-events: none;
     }
 
-    .demo-icon-wrap {
-      width: 48px; height: 48px;
-      background: rgba(45,212,191,0.08);
-      border: 1px solid rgba(45,212,191,0.15);
-      border-radius: 0.75rem;
+    /* Report Generator mockup */
+    .cp-report { display: flex; gap: 0.75rem; height: 100%; }
+    .cp-form-side { flex: 1; display: flex; flex-direction: column; gap: 0.5rem; }
+    .cp-form-label { height: 5px; width: 45%; background: rgba(255,255,255,0.1); border-radius: 2px; }
+    .cp-form-field {
+      height: 22px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+    }
+    .cp-form-textarea {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+    }
+    .cp-divider { width: 1px; background: rgba(255,255,255,0.06); flex-shrink: 0; }
+    .cp-output-side { flex: 1; display: flex; flex-direction: column; gap: 0.45rem; padding-top: 0.15rem; }
+    .cp-out-heading { height: 6px; width: 60%; background: rgba(45,212,191,0.4); border-radius: 2px; }
+    .cp-out-line { height: 5px; background: rgba(255,255,255,0.1); border-radius: 2px; }
+    .cp-out-line.s { width: 75%; }
+    .cp-out-line.m { width: 90%; }
+    .cp-out-line.l { width: 100%; }
+    .cp-out-line.xs { width: 50%; }
+    .cp-out-spacer { height: 3px; }
+    .cp-generate-btn {
+      margin-top: auto;
+      height: 20px;
+      background: var(--blue-bright);
+      border-radius: 3px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
-      margin-bottom: 1.25rem;
+    }
+    .cp-generate-btn span {
+      font-size: 8px;
+      font-weight: 700;
+      color: #0a0a0c;
+      letter-spacing: 0.05em;
+    }
+
+    /* Diagnostic Chat mockup */
+    .cp-chat { display: flex; flex-direction: column; gap: 0.5rem; }
+    .cp-bubble {
+      max-width: 82%;
+      padding: 0.4rem 0.65rem;
+      border-radius: 0.5rem;
+      font-size: 8px;
+      line-height: 1.4;
+      color: rgba(255,255,255,0.7);
+    }
+    .cp-bubble.user {
+      align-self: flex-end;
+      background: rgba(45,212,191,0.15);
+      border: 1px solid rgba(45,212,191,0.2);
+    }
+    .cp-bubble.ai {
+      align-self: flex-start;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .cp-typing {
+      align-self: flex-start;
+      display: flex;
+      gap: 3px;
+      padding: 0.5rem 0.65rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 0.5rem;
+    }
+    .cp-dot {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--blue-bright);
+      animation: typingBounce 1.2s ease-in-out infinite;
+    }
+    .cp-dot:nth-child(2) { animation-delay: 0.2s; }
+    .cp-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+      40%            { transform: translateY(-4px); opacity: 1; }
+    }
+
+    /* Q&A Manual mockup */
+    .cp-doc { display: flex; flex-direction: column; gap: 0.4rem; }
+    .cp-search-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.6rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(45,212,191,0.25);
+      border-radius: 4px;
+    }
+    .cp-search-bar svg { flex-shrink: 0; opacity: 0.6; }
+    .cp-search-text {
+      height: 5px;
+      flex: 1;
+      background: rgba(255,255,255,0.15);
+      border-radius: 2px;
+    }
+    .cp-doc-body { display: flex; flex-direction: column; gap: 0.3rem; padding-top: 0.3rem; }
+    .cp-doc-line { height: 5px; background: rgba(255,255,255,0.08); border-radius: 2px; }
+    .cp-doc-line.s  { width: 65%; }
+    .cp-doc-line.m  { width: 85%; }
+    .cp-doc-line.l  { width: 100%; }
+    .cp-doc-highlight {
+      height: 16px;
+      background: rgba(45,212,191,0.12);
+      border-left: 2px solid var(--blue-bright);
+      border-radius: 0 3px 3px 0;
+      padding-left: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 2px;
+    }
+    .cp-doc-highlight-line {
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(45,212,191,0.5);
+    }
+    .cp-doc-highlight-line:first-child { width: 70%; }
+    .cp-doc-highlight-line:last-child  { width: 40%; }
+    .cp-page-tag {
+      align-self: flex-end;
+      font-size: 7px;
+      color: var(--blue-bright);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      opacity: 0.8;
+    }
+
+    .demo-icon-wrap {
+      width: 42px; height: 42px;
+      background: rgba(45,212,191,0.08);
+      border: 1px solid rgba(45,212,191,0.15);
+      border-radius: 0.65rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--blue-bright);
+      margin-bottom: 1rem;
     }
     .demo-tag {
       display: inline-block;
@@ -352,19 +548,19 @@
       text-transform: uppercase;
       padding: 0.2rem 0.65rem;
       border-radius: 100px;
-      margin-bottom: 1rem;
+      margin-bottom: 0.9rem;
     }
     .tag-live   { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
     .tag-coming { background: rgba(234,179,8,0.08); color: #facc15; border: 1px solid rgba(234,179,8,0.18); }
 
-    .demo-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem; }
-    .demo-card > p { color: var(--gray); font-size: 0.87rem; margin-bottom: 1.4rem; line-height: 1.7; }
+    .demo-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.55rem; }
+    .demo-card-body > p { color: var(--gray); font-size: 0.86rem; margin-bottom: 1.25rem; line-height: 1.7; }
 
-    .demo-features { list-style: none; margin-bottom: 1.75rem; }
+    .demo-features { list-style: none; margin-bottom: 1.6rem; }
     .demo-features li {
-      font-size: 0.82rem;
+      font-size: 0.81rem;
       color: var(--gray-light);
-      padding: 0.3rem 0;
+      padding: 0.28rem 0;
       display: flex;
       align-items: center;
       gap: 0.55rem;
@@ -372,30 +568,22 @@
     .demo-features li::before {
       content: '';
       width: 14px; height: 14px;
-      background: rgba(45,212,191,0.12);
-      border: 1px solid rgba(45,212,191,0.2);
       border-radius: 50%;
       flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M1 4l2 2 4-4' stroke='%232dd4bf' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: center;
+      background: rgba(45,212,191,0.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M1 4l2 2 4-4' stroke='%232dd4bf' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center;
+      border: 1px solid rgba(45,212,191,0.2);
     }
-
     .demo-link {
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
       color: var(--blue-bright);
       text-decoration: none;
-      font-size: 0.87rem;
+      font-size: 0.86rem;
       font-weight: 700;
       transition: gap 0.2s;
     }
     .demo-link:hover { gap: 0.8rem; }
-    .demo-link-arrow { color: var(--blue-bright); }
 
     /* ─── ABOUT ───────────────────────────── */
     .about { background: var(--navy-mid); }
@@ -414,20 +602,25 @@
       position: absolute;
       inset: -1px;
       border-radius: 1.1rem;
-      background: rgba(45,212,191,0.2);
+      background: linear-gradient(135deg, rgba(45,212,191,0.3), rgba(20,184,166,0.08));
       z-index: 0;
     }
     .about-avatar {
       position: relative;
       z-index: 1;
-      width: 200px;
-      height: 200px;
+      width: 200px; height: 200px;
       border-radius: 1rem;
       background: var(--navy-light);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 5rem;
+    }
+    .about-initials {
+      font-size: 3.2rem;
+      font-weight: 800;
+      color: var(--blue-bright);
+      letter-spacing: -0.04em;
+      font-family: 'Inter', sans-serif;
     }
     .about-text p { color: var(--gray-light); font-size: 1rem; margin-bottom: 1rem; line-height: 1.75; }
     .about-location {
@@ -453,42 +646,39 @@
       border-radius: 0.3rem;
       transition: border-color 0.2s, color 0.2s;
     }
-    .skill-tag:hover {
-      border-color: rgba(45,212,191,0.3);
-      color: var(--blue-bright);
-    }
+    .skill-tag:hover { border-color: rgba(45,212,191,0.3); color: var(--blue-bright); }
 
     /* ─── CONTACT ─────────────────────────── */
     .contact { text-align: center; }
     .contact-wrapper {
       max-width: 580px;
       margin: 3rem auto 0;
-      border-radius: 0.75rem;
-      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 0.9rem;
+      border: 1px solid rgba(45,212,191,0.15);
       background: var(--navy-light);
+      box-shadow: 0 0 60px rgba(45,212,191,0.05);
     }
-    .contact-card {
-      padding: 3rem 2.5rem;
-    }
+    .contact-card { padding: 3rem 2.5rem; }
     .contact-card p {
       color: var(--gray-light);
       margin-bottom: 2rem;
       font-size: 1rem;
       line-height: 1.75;
-      position: relative;
     }
     .contact-links {
       display: flex;
       gap: 1rem;
       justify-content: center;
       flex-wrap: wrap;
-      position: relative;
     }
     .contact-location {
       margin-top: 1.5rem;
       font-size: 0.8rem;
       color: var(--gray);
-      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
     }
 
     /* ─── FOOTER ──────────────────────────── */
@@ -499,10 +689,7 @@
       color: var(--gray);
       font-size: 0.82rem;
     }
-    footer span {
-      color: rgba(255,255,255,0.2);
-      margin: 0 0.5rem;
-    }
+    footer span { color: rgba(255,255,255,0.2); margin: 0 0.5rem; }
 
     /* ─── RESPONSIVE ──────────────────────── */
     @media (max-width: 768px) {
@@ -531,6 +718,9 @@
 
 <!-- ─── HERO ──────────────────────────────────────────────── -->
 <section class="hero">
+  <div class="hero-orb orb-1"></div>
+  <div class="hero-orb orb-2"></div>
+  <div class="hero-orb orb-3"></div>
   <div class="hero-content">
     <div class="hero-badge">AI Solutions for Marine Engineering</div>
     <h1>
@@ -592,28 +782,36 @@
       </div>
       <ul class="pain-points">
         <li class="reveal reveal-delay-1">
-          <span class="pain-icon">📋</span>
+          <span class="pain-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="15" y2="16"/></svg>
+          </span>
           <div>
             <strong>Field Report Writing</strong>
             <span>Technicians spend 1–2 hours per job writing up findings that follow the same structure every time.</span>
           </div>
         </li>
         <li class="reveal reveal-delay-2">
-          <span class="pain-icon">📚</span>
+          <span class="pain-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </span>
           <div>
             <strong>Manual Lookup On Board</strong>
             <span>Engineers search hundreds of pages of documentation for answers they need in minutes, not hours.</span>
           </div>
         </li>
         <li class="reveal reveal-delay-3">
-          <span class="pain-icon">⚡</span>
+          <span class="pain-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </span>
           <div>
             <strong>Fault Diagnosis Under Pressure</strong>
             <span>Diagnosing drive, motor, and generator faults often relies entirely on individual engineer experience.</span>
           </div>
         </li>
         <li class="reveal reveal-delay-3">
-          <span class="pain-icon">📝</span>
+          <span class="pain-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </span>
           <div>
             <strong>Proposal &amp; Quote Generation</strong>
             <span>Senior engineers write proposals by hand — time that could be spent on actual engineering decisions.</span>
@@ -632,52 +830,126 @@
 
     <div class="demos-grid">
 
+      <!-- Card 1: Field Report Generator -->
       <div class="demo-card reveal reveal-delay-1">
-        <div class="demo-icon-wrap">📋</div>
-        <span class="demo-tag tag-live">Live Demo</span>
-        <h3>Field Report Generator</h3>
-        <p>
-          Enter job notes in plain language. Get a structured, professional
-          service report ready to sign and send — in under 60 seconds.
-        </p>
-        <ul class="demo-features">
-          <li>Works from rough technician notes</li>
-          <li>Outputs formatted, printable report</li>
-          <li>Covers findings, work performed &amp; recommendations</li>
-        </ul>
-        <a href="report-generator.html" class="demo-link">Try the demo <span class="demo-link-arrow">→</span></a>
+        <!-- Mini UI mockup -->
+        <div class="card-preview">
+          <div class="cp-report">
+            <div class="cp-form-side">
+              <div class="cp-form-label"></div>
+              <div class="cp-form-field"></div>
+              <div class="cp-form-label" style="width:55%"></div>
+              <div class="cp-form-field"></div>
+              <div class="cp-form-label" style="width:35%"></div>
+              <div class="cp-form-textarea"></div>
+              <div class="cp-generate-btn"><span>GENERATE REPORT</span></div>
+            </div>
+            <div class="cp-divider"></div>
+            <div class="cp-output-side">
+              <div class="cp-out-heading"></div>
+              <div class="cp-out-line l"></div>
+              <div class="cp-out-line m"></div>
+              <div class="cp-out-line s"></div>
+              <div class="cp-out-spacer"></div>
+              <div class="cp-out-heading" style="width:40%"></div>
+              <div class="cp-out-line l"></div>
+              <div class="cp-out-line m"></div>
+              <div class="cp-out-line xs"></div>
+            </div>
+          </div>
+        </div>
+        <div class="demo-card-body">
+          <div class="demo-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="15" y2="16"/></svg>
+          </div>
+          <span class="demo-tag tag-live">Live Demo</span>
+          <h3>Field Report Generator</h3>
+          <p>
+            Enter job notes in plain language. Get a structured, professional
+            service report ready to sign and send — in under 60 seconds.
+          </p>
+          <ul class="demo-features">
+            <li>Works from rough technician notes</li>
+            <li>Outputs formatted, printable report</li>
+            <li>Covers findings, work performed &amp; recommendations</li>
+          </ul>
+          <a href="report-generator.html" class="demo-link">Try the demo →</a>
+        </div>
       </div>
 
+      <!-- Card 2: Equipment Diagnostic Chat -->
       <div class="demo-card reveal reveal-delay-2">
-        <div class="demo-icon-wrap">⚡</div>
-        <span class="demo-tag tag-live">Live Demo</span>
-        <h3>Equipment Diagnostic Chat</h3>
-        <p>
-          Describe a fault or symptom on a motor, drive, or generator. Get
-          structured diagnostic guidance tuned to marine electrical systems.
-        </p>
-        <ul class="demo-features">
-          <li>Supports motors, VFDs, generators &amp; switchgear</li>
-          <li>Structured fault checks &amp; next steps</li>
-          <li>Fast, mobile-friendly interface</li>
-        </ul>
-        <a href="diagnostic-chat.html" class="demo-link">Try the demo <span class="demo-link-arrow">→</span></a>
+        <!-- Mini UI mockup -->
+        <div class="card-preview">
+          <div class="cp-chat">
+            <div class="cp-bubble user">Bow thruster — motor 2 overheating at 65% load. VFD showing fault E005.</div>
+            <div class="cp-bubble ai">E005 = overcurrent on output phase. Check: (1) motor winding resistance, (2) cooling fan clearance, (3) VFD current limit settings...</div>
+            <div class="cp-typing">
+              <div class="cp-dot"></div>
+              <div class="cp-dot"></div>
+              <div class="cp-dot"></div>
+            </div>
+          </div>
+        </div>
+        <div class="demo-card-body">
+          <div class="demo-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <span class="demo-tag tag-live">Live Demo</span>
+          <h3>Equipment Diagnostic Chat</h3>
+          <p>
+            Describe a fault or symptom on a motor, drive, or generator. Get
+            structured diagnostic guidance tuned to marine electrical systems.
+          </p>
+          <ul class="demo-features">
+            <li>Supports motors, VFDs, generators &amp; switchgear</li>
+            <li>Structured fault checks &amp; next steps</li>
+            <li>Fast, mobile-friendly interface</li>
+          </ul>
+          <a href="diagnostic-chat.html" class="demo-link">Try the demo →</a>
+        </div>
       </div>
 
+      <!-- Card 3: Technical Manual Q&A -->
       <div class="demo-card reveal reveal-delay-3">
-        <div class="demo-icon-wrap">📄</div>
-        <span class="demo-tag tag-coming">Coming Soon</span>
-        <h3>Technical Manual Q&amp;A</h3>
-        <p>
-          Upload any equipment manual and ask it questions in plain English.
-          No more scrolling through 400-page PDFs on board a vessel.
-        </p>
-        <ul class="demo-features">
-          <li>Upload any PDF manual</li>
-          <li>Ask questions in plain language</li>
-          <li>Cites exact page numbers in every answer</li>
-        </ul>
-        <a href="#contact" class="demo-link">Request early access <span class="demo-link-arrow">→</span></a>
+        <!-- Mini UI mockup -->
+        <div class="card-preview">
+          <div class="cp-doc">
+            <div class="cp-search-bar">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <div class="cp-search-text"></div>
+            </div>
+            <div class="cp-doc-body">
+              <div class="cp-doc-line l"></div>
+              <div class="cp-doc-line m"></div>
+              <div class="cp-doc-line s"></div>
+              <div class="cp-doc-highlight">
+                <div style="display:flex;flex-direction:column;gap:2px;flex:1">
+                  <div class="cp-doc-highlight-line" style="width:75%"></div>
+                  <div class="cp-doc-highlight-line" style="width:45%"></div>
+                </div>
+              </div>
+              <div class="cp-page-tag">↗ Page 247</div>
+            </div>
+          </div>
+        </div>
+        <div class="demo-card-body">
+          <div class="demo-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><circle cx="14" cy="10" r="2"/><path d="m16 12 2 2"/></svg>
+          </div>
+          <span class="demo-tag tag-coming">Coming Soon</span>
+          <h3>Technical Manual Q&amp;A</h3>
+          <p>
+            Upload any equipment manual and ask it questions in plain English.
+            No more scrolling through 400-page PDFs on board a vessel.
+          </p>
+          <ul class="demo-features">
+            <li>Upload any PDF manual</li>
+            <li>Ask questions in plain language</li>
+            <li>Cites exact page numbers in every answer</li>
+          </ul>
+          <a href="#contact" class="demo-link">Request early access →</a>
+        </div>
       </div>
 
     </div>
@@ -689,12 +961,17 @@
   <div class="container">
     <div class="about-grid">
       <div class="about-avatar-wrap reveal">
-        <div class="about-avatar">👤</div>
+        <div class="about-avatar">
+          <span class="about-initials">SL</span>
+        </div>
       </div>
       <div class="about-text reveal reveal-delay-1">
         <span class="section-label">About</span>
         <h2 class="section-title">Sebastian Leal</h2>
-        <div class="about-location">📍 Miami, Florida</div>
+        <div class="about-location">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Miami, Florida
+        </div>
         <p>
           I'm a software and AI engineer based in Miami, Florida, focused on
           building practical, focused tools — not enterprise bloat. I work with
@@ -746,7 +1023,10 @@
             (786) 719-4383
           </a>
         </div>
-        <p class="contact-location">📍 Based in Miami, Florida</p>
+        <p class="contact-location">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Based in Miami, Florida
+        </p>
       </div>
     </div>
   </div>
@@ -766,7 +1046,6 @@
 </footer>
 
 <script>
-  // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -774,8 +1053,7 @@
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.12 });
-
+  }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 
