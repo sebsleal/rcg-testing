@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tool Tracker | Sebastian Leal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #0a0a0c;
+      --navy-mid:   #131316;
+      --navy-light: #1c1c21;
+      --blue:       #14b8a6;
+      --blue-bright:#2dd4bf;
+      --white:      #ededf0;
+      --gray:       #85858f;
+      --gray-light: #b8b8c2;
+      --green:      #4ade80;
+      --red:        #f87171;
+      --amber:      #fbbf24;
+      --purple:     #a78bfa;
+      --border:     rgba(255,255,255,0.07);
+    }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'Inter', system-ui, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      background: rgba(10,10,12,0.95);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-size: 1rem; font-weight: 800; color: var(--white); text-decoration: none; }
+    .nav-logo span { color: var(--blue); }
+    .nav-back { color: var(--gray); text-decoration: none; font-size: 0.875rem; font-weight: 500; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; }
+    .nav-back:hover { color: var(--white); }
+
+    /* LAYOUT */
+    .page { display: flex; height: calc(100vh - 57px); overflow: hidden; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 320px;
+      min-width: 320px;
+      background: var(--navy-mid);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .sidebar-header {
+      padding: 1.25rem 1.25rem 1rem;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .sidebar-header h2 { font-size: 1rem; font-weight: 700; color: var(--white); margin-bottom: 0.75rem; }
+    .search-row { display: flex; gap: 0.5rem; margin-bottom: 0.6rem; }
+    .search-input {
+      flex: 1;
+      background: var(--navy-light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--white);
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--blue); }
+    .search-input::placeholder { color: var(--gray); }
+    .filter-row { display: flex; gap: 0.4rem; }
+    .filter-btn {
+      flex: 1;
+      padding: 0.3rem 0.4rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--navy-light);
+      color: var(--gray);
+      font-size: 0.7rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .filter-btn.active { background: var(--blue); border-color: var(--blue); color: var(--navy); font-weight: 600; }
+    .filter-btn:hover:not(.active) { border-color: var(--blue); color: var(--white); }
+
+    .add-btn {
+      width: 100%;
+      margin-top: 0.75rem;
+      padding: 0.55rem;
+      border-radius: 8px;
+      border: 1px dashed rgba(45,212,191,0.35);
+      background: rgba(45,212,191,0.05);
+      color: var(--blue-bright);
+      font-size: 0.8rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 600;
+    }
+    .add-btn:hover { background: rgba(45,212,191,0.12); border-color: var(--blue-bright); }
+
+    .tool-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.75rem;
+    }
+    .tool-list::-webkit-scrollbar { width: 4px; }
+    .tool-list::-webkit-scrollbar-thumb { background: var(--navy-light); border-radius: 2px; }
+
+    .tool-card {
+      background: var(--navy-light);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 0.6rem;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .tool-card:hover { border-color: rgba(45,212,191,0.3); }
+    .tool-card.active { border-color: var(--blue); background: rgba(20,184,166,0.08); }
+    .tool-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.3rem; }
+    .tool-card-name { font-size: 0.85rem; font-weight: 700; color: var(--white); }
+    .tool-card-code { font-size: 0.7rem; font-family: monospace; color: var(--blue-bright); background: rgba(45,212,191,0.1); padding: 0.15rem 0.4rem; border-radius: 4px; }
+    .tool-card-sub { font-size: 0.75rem; color: var(--gray); margin-bottom: 0.45rem; }
+    .tool-card-footer { display: flex; align-items: center; justify-content: space-between; }
+
+    /* STATUS BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 600;
+    }
+    .badge-available   { background: rgba(74,222,128,0.12); color: var(--green); }
+    .badge-checked-out { background: rgba(251,191,36,0.12); color: var(--amber); }
+    .badge-calibration { background: rgba(167,139,250,0.12); color: var(--purple); }
+    .badge-overdue     { background: rgba(248,113,113,0.15); color: var(--red); }
+    .badge-retired     { background: rgba(133,133,143,0.12); color: var(--gray); }
+    .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+    .cal-due-label { font-size: 0.68rem; color: var(--gray); }
+    .cal-due-label.overdue { color: var(--red); }
+    .cal-due-label.soon    { color: var(--amber); }
+
+    /* MAIN PANEL */
+    .main-panel {
+      flex: 1;
+      overflow-y: auto;
+      background: var(--navy);
+    }
+    .main-panel::-webkit-scrollbar { width: 5px; }
+    .main-panel::-webkit-scrollbar-thumb { background: var(--navy-light); border-radius: 2px; }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 0.75rem;
+      color: var(--gray);
+      text-align: center;
+    }
+    .empty-icon {
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      background: var(--navy-light);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+    }
+    .empty-state h3 { font-size: 1rem; color: var(--gray-light); }
+    .empty-state p  { font-size: 0.825rem; max-width: 260px; }
+
+    /* DETAIL PANEL */
+    .detail-header {
+      padding: 1.5rem 2rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-shrink: 0;
+    }
+    .detail-title { font-size: 1.35rem; font-weight: 800; margin-bottom: 0.3rem; }
+    .detail-code { font-size: 0.85rem; font-family: monospace; color: var(--blue-bright); }
+    .detail-actions { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--navy-light);
+      color: var(--white);
+      font-size: 0.8rem;
+      font-family: inherit;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn:hover { border-color: var(--blue); color: var(--blue-bright); }
+    .btn-primary { background: var(--blue); border-color: var(--blue); color: var(--navy); }
+    .btn-primary:hover { background: var(--blue-bright); border-color: var(--blue-bright); color: var(--navy); }
+    .btn-amber { background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.3); color: var(--amber); }
+    .btn-amber:hover { background: rgba(251,191,36,0.22); }
+    .btn-green { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.3); color: var(--green); }
+    .btn-green:hover { background: rgba(74,222,128,0.2); }
+    .btn-red { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: var(--red); }
+    .btn-red:hover { background: rgba(248,113,113,0.18); }
+    .btn-sm { padding: 0.3rem 0.65rem; font-size: 0.75rem; }
+
+    .detail-body { padding: 1.5rem 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+
+    /* INFO GRID */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+    .info-field label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray); display: block; margin-bottom: 0.2rem; }
+    .info-field .value { font-size: 0.9rem; font-weight: 600; color: var(--white); }
+    .info-field .value.mono { font-family: monospace; color: var(--blue-bright); }
+
+    /* SECTION CARD */
+    .section-card {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .section-card-header {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .section-card-header h3 { font-size: 0.85rem; font-weight: 700; color: var(--white); }
+    .section-card-body { padding: 1.25rem; }
+
+    /* CALIBRATION STATUS STRIP */
+    .cal-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .cal-field label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray); display: block; margin-bottom: 0.2rem; }
+    .cal-field .value { font-size: 0.9rem; font-weight: 600; }
+
+    /* HISTORY TABLE */
+    .history-table { width: 100%; border-collapse: collapse; }
+    .history-table th {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--gray);
+      padding: 0.4rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .history-table td {
+      padding: 0.6rem 0.75rem;
+      font-size: 0.8rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .history-table tr:last-child td { border-bottom: none; }
+    .history-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .pass-label { color: var(--green); font-weight: 600; }
+    .fail-label { color: var(--red); font-weight: 600; }
+    .notes-cell { color: var(--gray-light); font-size: 0.75rem; }
+    .empty-row td { color: var(--gray); font-style: italic; padding: 1.25rem 0.75rem; }
+
+    /* ASSIGNMENT STATUS */
+    .assignment-box {
+      background: var(--navy-light);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+    }
+    .assignment-box.checked-out { border-color: rgba(251,191,36,0.25); background: rgba(251,191,36,0.05); }
+    .assignment-box .proj-name { font-size: 1rem; font-weight: 700; color: var(--white); margin-bottom: 0.4rem; }
+    .assignment-meta { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-top: 0.5rem; }
+    .assignment-meta span { font-size: 0.78rem; color: var(--gray-light); }
+    .assignment-meta strong { color: var(--white); }
+
+    /* MODAL OVERLAY */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 540px;
+      max-width: 95vw;
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+    .modal::-webkit-scrollbar { width: 4px; }
+    .modal::-webkit-scrollbar-thumb { background: var(--navy-light); border-radius: 2px; }
+    .modal-header {
+      padding: 1.25rem 1.5rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky; top: 0;
+      background: var(--navy-mid);
+      z-index: 1;
+    }
+    .modal-header h2 { font-size: 1rem; font-weight: 700; }
+    .modal-close {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gray);
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .modal-close:hover { color: var(--white); border-color: var(--gray); }
+    .modal-body { padding: 1.25rem 1.5rem 1.5rem; }
+    .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; gap: 0.6rem; justify-content: flex-end; }
+
+    /* FORM */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-group.span2 { grid-column: span 2; }
+    .form-group label { font-size: 0.73rem; font-weight: 600; color: var(--gray-light); text-transform: uppercase; letter-spacing: 0.04em; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: var(--navy-light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--white);
+      padding: 0.55rem 0.75rem;
+      font-size: 0.85rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--blue); }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: var(--gray); }
+    .form-group select option { background: var(--navy-light); }
+    .form-group textarea { resize: vertical; min-height: 70px; }
+    .form-section-title {
+      grid-column: span 2;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+      margin-top: 0.25rem;
+    }
+
+    /* TOAST */
+    #toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 1.1rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--white);
+      z-index: 999;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.green { border-color: rgba(74,222,128,0.35); color: var(--green); }
+    #toast.amber { border-color: rgba(251,191,36,0.35); color: var(--amber); }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Sebastian <span>Leal</span></a>
+  <a href="index.html" class="nav-back">
+    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    Back to Portfolio
+  </a>
+</nav>
+
+<!-- LAYOUT -->
+<div class="page">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>Tool Tracker</h2>
+      <div class="search-row">
+        <input class="search-input" id="searchInput" placeholder="Search by name or code..." oninput="renderSidebar()" />
+      </div>
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+        <button class="filter-btn" onclick="setFilter('available', this)">Available</button>
+        <button class="filter-btn" onclick="setFilter('checked-out', this)">Out</button>
+        <button class="filter-btn" onclick="setFilter('overdue', this)">Cal Due</button>
+      </div>
+      <button class="add-btn" onclick="openAddTool()">+ Register New Tool</button>
+    </div>
+    <div class="tool-list" id="toolList"></div>
+  </div>
+
+  <!-- MAIN PANEL -->
+  <div class="main-panel" id="mainPanel">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">
+        <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z"/>
+        </svg>
+      </div>
+      <h3>Select a tool to view details</h3>
+      <p>Choose a tool from the sidebar or register a new one to get started.</p>
+    </div>
+    <div id="detailPanel" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- MODAL: Add/Edit Tool -->
+<div class="modal-overlay" id="addToolModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">Register New Tool</h2>
+      <button class="modal-close" onclick="closeModal('addToolModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group span2 form-section-title">TOOL IDENTIFICATION</div>
+        <div class="form-group">
+          <label>Tool Name *</label>
+          <input id="f_name" placeholder="e.g. Digital Multimeter" />
+        </div>
+        <div class="form-group">
+          <label>Tool Code *</label>
+          <input id="f_code" placeholder="Auto: TRK-001" />
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="f_category">
+            <option value="">Select category...</option>
+            <option>Electrical Test</option>
+            <option>Mechanical</option>
+            <option>Measuring / Gauging</option>
+            <option>Safety / PPE</option>
+            <option>Torque / Fastening</option>
+            <option>Hydraulic</option>
+            <option>Vibration / Alignment</option>
+            <option>Thermal / IR</option>
+            <option>Communication / Radio</option>
+            <option>Hand Tool</option>
+            <option>Power Tool</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="f_status">
+            <option value="available">Available</option>
+            <option value="checked-out">Checked Out</option>
+            <option value="calibration">In Calibration</option>
+            <option value="retired">Retired</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Make / Manufacturer</label>
+          <input id="f_make" placeholder="e.g. Fluke" />
+        </div>
+        <div class="form-group">
+          <label>Model</label>
+          <input id="f_model" placeholder="e.g. 87V" />
+        </div>
+        <div class="form-group">
+          <label>Serial Number</label>
+          <input id="f_serial" placeholder="e.g. SN123456" />
+        </div>
+        <div class="form-group">
+          <label>Location / Storage</label>
+          <input id="f_location" placeholder="e.g. Shop Cabinet A-3" />
+        </div>
+        <div class="form-group span2">
+          <label>Notes</label>
+          <textarea id="f_notes" placeholder="Additional notes about this tool..."></textarea>
+        </div>
+
+        <div class="form-group span2 form-section-title">CALIBRATION</div>
+        <div class="form-group">
+          <label>Requires Calibration?</label>
+          <select id="f_calRequired">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Cal Interval (months)</label>
+          <input id="f_calInterval" type="number" min="1" placeholder="e.g. 12" />
+        </div>
+        <div class="form-group">
+          <label>Last Calibration Date</label>
+          <input id="f_lastCal" type="date" />
+        </div>
+        <div class="form-group">
+          <label>Next Calibration Due</label>
+          <input id="f_nextCal" type="date" />
+        </div>
+        <div class="form-group">
+          <label>Cal Certificate #</label>
+          <input id="f_calCert" placeholder="e.g. CAL-2024-0158" />
+        </div>
+        <div class="form-group">
+          <label>Calibrated By</label>
+          <input id="f_calBy" placeholder="Lab name or technician" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('addToolModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTool()">Save Tool</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Check Out -->
+<div class="modal-overlay" id="checkOutModal">
+  <div class="modal" style="width:460px;">
+    <div class="modal-header">
+      <h2>Check Out Tool</h2>
+      <button class="modal-close" onclick="closeModal('checkOutModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group span2">
+          <label>Project / Vessel Name *</label>
+          <input id="co_project" placeholder="e.g. MV Atlantic Star — Engine Room Refit" />
+        </div>
+        <div class="form-group">
+          <label>Assigned To (Person) *</label>
+          <input id="co_person" placeholder="e.g. Mike Torres" />
+        </div>
+        <div class="form-group">
+          <label>Date Out</label>
+          <input id="co_dateOut" type="date" />
+        </div>
+        <div class="form-group span2">
+          <label>Expected Return Date</label>
+          <input id="co_dateReturn" type="date" />
+        </div>
+        <div class="form-group span2">
+          <label>Notes</label>
+          <textarea id="co_notes" placeholder="Any special instructions or notes..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('checkOutModal')">Cancel</button>
+      <button class="btn btn-amber" onclick="confirmCheckOut()">Check Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add Calibration Record -->
+<div class="modal-overlay" id="calModal">
+  <div class="modal" style="width:460px;">
+    <div class="modal-header">
+      <h2>Add Calibration Record</h2>
+      <button class="modal-close" onclick="closeModal('calModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Date *</label>
+          <input id="cal_date" type="date" />
+        </div>
+        <div class="form-group">
+          <label>Result *</label>
+          <select id="cal_result">
+            <option value="pass">Pass</option>
+            <option value="fail">Fail</option>
+            <option value="adjusted">Adjusted &amp; Pass</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Certificate #</label>
+          <input id="cal_cert" placeholder="e.g. CAL-2025-0092" />
+        </div>
+        <div class="form-group">
+          <label>Calibrated By</label>
+          <input id="cal_by" placeholder="Lab name or technician" />
+        </div>
+        <div class="form-group">
+          <label>Next Cal Due</label>
+          <input id="cal_next" type="date" />
+        </div>
+        <div class="form-group">
+          <label>Interval (months)</label>
+          <input id="cal_interval" type="number" min="1" placeholder="12" />
+        </div>
+        <div class="form-group span2">
+          <label>Notes</label>
+          <textarea id="cal_notes" placeholder="Findings, adjustments made, conditions..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('calModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCalRecord()">Save Record</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ─── DATA STORE ───────────────────────────────────────────────────────────────
+const STORE_KEY = 'mes_tools_v1';
+
+function loadData() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+  catch(e) { return []; }
+}
+function saveData(tools) {
+  localStorage.setItem(STORE_KEY, JSON.stringify(tools));
+}
+function getData() { return loadData(); }
+
+// ─── SEED DATA ────────────────────────────────────────────────────────────────
+function seedData() {
+  const tools = loadData();
+  if (tools.length > 0) return;
+
+  const today = new Date();
+  const fmt = d => d.toISOString().slice(0,10);
+  const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+  const subDays = (d, n) => addDays(d, -n);
+
+  const seed = [
+    {
+      id: genId(),
+      name: 'Fluke 87V Digital Multimeter',
+      code: 'TRK-001',
+      category: 'Electrical Test',
+      status: 'available',
+      make: 'Fluke', model: '87V',
+      serial: 'FL87V-A02841',
+      location: 'Shop Cabinet A-1',
+      notes: 'Primary field DMM. Handle with care — calibrated unit.',
+      calRequired: 'yes', calInterval: 12,
+      lastCal: fmt(subDays(today, 95)),
+      nextCal: fmt(addDays(today, 270)),
+      calCert: 'CAL-2025-0041',
+      calBy: 'Precision Cal Labs',
+      calHistory: [
+        { id: genId(), date: fmt(subDays(today, 95)), result: 'pass', cert: 'CAL-2025-0041', by: 'Precision Cal Labs', nextDue: fmt(addDays(today, 270)), notes: 'All ranges within spec.' },
+        { id: genId(), date: fmt(subDays(today, 460)), result: 'adjusted', cert: 'CAL-2024-0089', by: 'Precision Cal Labs', nextDue: fmt(subDays(today, 95)), notes: 'AC voltage range adjusted. All checks passed after adjustment.' }
+      ],
+      assignments: [],
+      addedOn: fmt(subDays(today, 500))
+    },
+    {
+      id: genId(),
+      name: 'Megger MIT1025 Insulation Tester',
+      code: 'TRK-002',
+      category: 'Electrical Test',
+      status: 'checked-out',
+      make: 'Megger', model: 'MIT1025',
+      serial: 'MG-MIT1025-3341',
+      location: 'Shop Cabinet A-2',
+      notes: '10kV insulation resistance tester. High-voltage — only qualified technicians.',
+      calRequired: 'yes', calInterval: 12,
+      lastCal: fmt(subDays(today, 310)),
+      nextCal: fmt(addDays(today, 55)),
+      calCert: 'CAL-2024-0211',
+      calBy: 'Marine Cal Services',
+      calHistory: [
+        { id: genId(), date: fmt(subDays(today, 310)), result: 'pass', cert: 'CAL-2024-0211', by: 'Marine Cal Services', nextDue: fmt(addDays(today, 55)), notes: 'All test voltages verified. Passed.' }
+      ],
+      assignments: [
+        {
+          id: genId(),
+          project: 'MV Pacific Horizon — VFD Switchboard Inspection',
+          person: 'James Rivera',
+          dateOut: fmt(subDays(today, 8)),
+          expectedReturn: fmt(addDays(today, 6)),
+          dateIn: null,
+          notes: 'Needed for full IR testing on 6.6kV bus.'
+        }
+      ],
+      addedOn: fmt(subDays(today, 600))
+    },
+    {
+      id: genId(),
+      name: 'Extech IR308 Infrared Thermometer',
+      code: 'TRK-003',
+      category: 'Thermal / IR',
+      status: 'available',
+      make: 'Extech', model: 'IR308',
+      serial: 'EX-IR308-8812',
+      location: 'Shop Cabinet B-1',
+      notes: '',
+      calRequired: 'yes', calInterval: 24,
+      lastCal: fmt(subDays(today, 420)),
+      nextCal: fmt(addDays(today, -55)),
+      calCert: 'CAL-2023-0190',
+      calBy: 'TechCal Inc.',
+      calHistory: [
+        { id: genId(), date: fmt(subDays(today, 420)), result: 'pass', cert: 'CAL-2023-0190', by: 'TechCal Inc.', nextDue: fmt(addDays(today, -55)), notes: 'Passed all temperature checkpoints.' }
+      ],
+      assignments: [],
+      addedOn: fmt(subDays(today, 700))
+    },
+    {
+      id: genId(),
+      name: 'Klein CL800 Clamp Meter',
+      code: 'TRK-004',
+      category: 'Electrical Test',
+      status: 'available',
+      make: 'Klein Tools', model: 'CL800',
+      serial: 'KL-CL800-5529',
+      location: 'Shop Cabinet A-1',
+      notes: 'True RMS. Good for harmonics measurement.',
+      calRequired: 'yes', calInterval: 12,
+      lastCal: fmt(subDays(today, 45)),
+      nextCal: fmt(addDays(today, 320)),
+      calCert: 'CAL-2025-0108',
+      calBy: 'Precision Cal Labs',
+      calHistory: [
+        { id: genId(), date: fmt(subDays(today, 45)), result: 'pass', cert: 'CAL-2025-0108', by: 'Precision Cal Labs', nextDue: fmt(addDays(today, 320)), notes: '' }
+      ],
+      assignments: [
+        {
+          id: genId(),
+          project: 'MT Nordic Spirit — Generator Load Test',
+          person: 'Sarah Chen',
+          dateOut: fmt(subDays(today, 30)),
+          expectedReturn: fmt(subDays(today, 20)),
+          dateIn: fmt(subDays(today, 22)),
+          notes: ''
+        }
+      ],
+      addedOn: fmt(subDays(today, 200))
+    },
+    {
+      id: genId(),
+      name: 'Snap-on Torque Wrench 3/8"',
+      code: 'TRK-005',
+      category: 'Torque / Fastening',
+      status: 'checked-out',
+      make: 'Snap-on', model: 'TechAngle 3/8"',
+      serial: 'SN-TA38-9921',
+      location: 'Shop Cabinet C-2',
+      notes: 'Range 5–80 ft-lb.',
+      calRequired: 'yes', calInterval: 12,
+      lastCal: fmt(subDays(today, 200)),
+      nextCal: fmt(addDays(today, 165)),
+      calCert: 'CAL-2025-0019',
+      calBy: 'Tool Cal Services',
+      calHistory: [
+        { id: genId(), date: fmt(subDays(today, 200)), result: 'pass', cert: 'CAL-2025-0019', by: 'Tool Cal Services', nextDue: fmt(addDays(today, 165)), notes: 'Accuracy within ±2%.' }
+      ],
+      assignments: [
+        {
+          id: genId(),
+          project: 'MV Ocean Voyager — Main Engine Overhaul',
+          person: 'Carlos Mendez',
+          dateOut: fmt(subDays(today, 15)),
+          expectedReturn: fmt(addDays(today, 10)),
+          dateIn: null,
+          notes: 'For cylinder head bolt torquing.'
+        }
+      ],
+      addedOn: fmt(subDays(today, 400))
+    }
+  ];
+
+  saveData(seed);
+}
+
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function nextCode() {
+  const tools = loadData();
+  if (!tools.length) return 'TRK-001';
+  const nums = tools.map(t => {
+    const m = t.code && t.code.match(/TRK-(\d+)/);
+    return m ? parseInt(m[1]) : 0;
+  });
+  return 'TRK-' + String(Math.max(...nums) + 1).padStart(3, '0');
+}
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let activeFilter = 'all';
+let activeTool   = null;
+let editingId    = null;
+
+// ─── FILTER ──────────────────────────────────────────────────────────────────
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSidebar();
+}
+
+// ─── STATUS HELPERS ──────────────────────────────────────────────────────────
+function calStatus(tool) {
+  if (tool.calRequired !== 'yes') return null;
+  if (!tool.nextCal) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const due = new Date(tool.nextCal);
+  const diff = Math.round((due - today) / 86400000);
+  if (diff < 0)  return { label: 'OVERDUE', cls: 'overdue', days: diff };
+  if (diff <= 30) return { label: diff === 0 ? 'DUE TODAY' : `Due in ${diff}d`, cls: 'soon', days: diff };
+  return { label: `Due ${fmtDate(tool.nextCal)}`, cls: 'ok', days: diff };
+}
+
+function isOverdue(tool) {
+  const cs = calStatus(tool);
+  return cs && cs.days < 0;
+}
+
+function effectiveStatus(tool) {
+  if (isOverdue(tool) && tool.status === 'available') return 'overdue';
+  return tool.status;
+}
+
+function badgeHtml(status) {
+  const map = {
+    'available':   ['badge-available',   'Available'],
+    'checked-out': ['badge-checked-out', 'Checked Out'],
+    'calibration': ['badge-calibration', 'In Calibration'],
+    'overdue':     ['badge-overdue',     'Cal Overdue'],
+    'retired':     ['badge-retired',     'Retired'],
+  };
+  const [cls, label] = map[status] || map['available'];
+  return `<span class="badge ${cls}"><span class="badge-dot"></span>${label}</span>`;
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const [y,m,day] = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
+}
+
+// ─── SIDEBAR ─────────────────────────────────────────────────────────────────
+function renderSidebar() {
+  const query = document.getElementById('searchInput').value.toLowerCase().trim();
+  const list  = document.getElementById('toolList');
+  let tools   = loadData();
+
+  if (query) {
+    tools = tools.filter(t =>
+      t.name.toLowerCase().includes(query) ||
+      (t.code && t.code.toLowerCase().includes(query)) ||
+      (t.category && t.category.toLowerCase().includes(query)) ||
+      (t.make && t.make.toLowerCase().includes(query))
+    );
+  }
+
+  if (activeFilter === 'available')   tools = tools.filter(t => t.status === 'available' && !isOverdue(t));
+  if (activeFilter === 'checked-out') tools = tools.filter(t => t.status === 'checked-out');
+  if (activeFilter === 'overdue')     tools = tools.filter(t => isOverdue(t));
+
+  if (!tools.length) {
+    list.innerHTML = `<div style="padding:1.5rem;text-align:center;color:var(--gray);font-size:0.8rem;">No tools found</div>`;
+    return;
+  }
+
+  list.innerHTML = tools.map(t => {
+    const eff = effectiveStatus(t);
+    const cs  = calStatus(t);
+    const active = activeTool === t.id ? 'active' : '';
+    return `
+      <div class="tool-card ${active}" onclick="selectTool('${t.id}')">
+        <div class="tool-card-top">
+          <span class="tool-card-name">${t.name}</span>
+          <span class="tool-card-code">${t.code || '—'}</span>
+        </div>
+        <div class="tool-card-sub">${t.category || 'Uncategorized'} ${t.make ? '· ' + t.make : ''}</div>
+        <div class="tool-card-footer">
+          ${badgeHtml(eff)}
+          ${cs ? `<span class="cal-due-label ${cs.cls === 'ok' ? '' : cs.cls}">${cs.label}</span>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ─── SELECT TOOL ─────────────────────────────────────────────────────────────
+function selectTool(id) {
+  activeTool = id;
+  renderSidebar();
+  renderDetail(id);
+}
+
+function renderDetail(id) {
+  const tools = loadData();
+  const t = tools.find(x => x.id === id);
+  if (!t) return;
+
+  document.getElementById('emptyState').style.display  = 'none';
+  document.getElementById('detailPanel').style.display = 'block';
+
+  const eff = effectiveStatus(t);
+  const cs  = calStatus(t);
+
+  // Current assignment
+  const activeAssignment = t.assignments && t.assignments.find(a => !a.dateIn);
+
+  // Action buttons
+  let actionBtns = '';
+  if (t.status === 'available' || t.status === 'overdue') {
+    actionBtns += `<button class="btn btn-amber btn-sm" onclick="openCheckOut('${t.id}')">Check Out</button>`;
+  }
+  if (t.status === 'checked-out') {
+    actionBtns += `<button class="btn btn-green btn-sm" onclick="checkIn('${t.id}')">Check In</button>`;
+  }
+  actionBtns += `<button class="btn btn-sm" onclick="openAddCal('${t.id}')">+ Cal Record</button>`;
+  actionBtns += `<button class="btn btn-sm" onclick="editTool('${t.id}')">Edit</button>`;
+  actionBtns += `<button class="btn btn-red btn-sm" onclick="deleteTool('${t.id}')">Delete</button>`;
+
+  // Build cal history rows
+  const calRows = (t.calHistory || []).slice().reverse().map(r => {
+    const resultLabel = r.result === 'pass' ? `<span class="pass-label">PASS</span>`
+      : r.result === 'adjusted' ? `<span class="pass-label">ADJUSTED</span>`
+      : `<span class="fail-label">FAIL</span>`;
+    return `<tr>
+      <td>${fmtDate(r.date)}</td>
+      <td>${resultLabel}</td>
+      <td class="notes-cell">${r.cert || '—'}</td>
+      <td class="notes-cell">${r.by || '—'}</td>
+      <td class="notes-cell">${fmtDate(r.nextDue)}</td>
+      <td class="notes-cell">${r.notes || ''}</td>
+    </tr>`;
+  }).join('') || `<tr class="empty-row"><td colspan="6">No calibration records yet.</td></tr>`;
+
+  // Build assignment history rows
+  const assignRows = (t.assignments || []).slice().reverse().map(a => {
+    const status = a.dateIn
+      ? `<span style="color:var(--green);font-size:0.75rem;font-weight:600;">Returned</span>`
+      : `<span style="color:var(--amber);font-size:0.75rem;font-weight:600;">Out</span>`;
+    return `<tr>
+      <td>${a.project}</td>
+      <td class="notes-cell">${a.person}</td>
+      <td class="notes-cell">${fmtDate(a.dateOut)}</td>
+      <td class="notes-cell">${a.dateIn ? fmtDate(a.dateIn) : 'Not returned'}</td>
+      <td>${status}</td>
+    </tr>`;
+  }).join('') || `<tr class="empty-row"><td colspan="5">No assignment history.</td></tr>`;
+
+  document.getElementById('detailPanel').innerHTML = `
+    <div class="detail-header">
+      <div>
+        <div class="detail-title">${t.name}</div>
+        <div class="detail-code">${t.code}</div>
+        <div style="margin-top:0.5rem;">${badgeHtml(eff)}</div>
+      </div>
+      <div class="detail-actions">
+        ${actionBtns}
+      </div>
+    </div>
+
+    <div class="detail-body">
+
+      <!-- INFO -->
+      <div class="info-grid">
+        <div class="info-field"><label>Category</label><div class="value">${t.category || '—'}</div></div>
+        <div class="info-field"><label>Make / Model</label><div class="value">${[t.make,t.model].filter(Boolean).join(' ') || '—'}</div></div>
+        <div class="info-field"><label>Serial Number</label><div class="value mono">${t.serial || '—'}</div></div>
+        <div class="info-field"><label>Location</label><div class="value">${t.location || '—'}</div></div>
+        ${t.notes ? `<div class="info-field" style="grid-column:span 2;"><label>Notes</label><div class="value" style="font-weight:400;color:var(--gray-light);font-size:0.82rem;">${t.notes}</div></div>` : ''}
+      </div>
+
+      <!-- CURRENT ASSIGNMENT -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <h3>Current Assignment</h3>
+          ${t.status === 'checked-out' && activeAssignment
+            ? `<button class="btn btn-green btn-sm" onclick="checkIn('${t.id}')">Check In</button>`
+            : ''}
+        </div>
+        <div class="section-card-body">
+          ${t.status === 'checked-out' && activeAssignment ? `
+            <div class="assignment-box checked-out">
+              <div class="proj-name">${activeAssignment.project}</div>
+              <div class="assignment-meta">
+                <span>Assigned to: <strong>${activeAssignment.person}</strong></span>
+                <span>Out: <strong>${fmtDate(activeAssignment.dateOut)}</strong></span>
+                ${activeAssignment.expectedReturn ? `<span>Expected return: <strong>${fmtDate(activeAssignment.expectedReturn)}</strong></span>` : ''}
+              </div>
+              ${activeAssignment.notes ? `<div style="margin-top:0.6rem;font-size:0.78rem;color:var(--gray-light);">${activeAssignment.notes}</div>` : ''}
+            </div>
+          ` : `
+            <div class="assignment-box">
+              <div style="color:var(--gray);font-size:0.85rem;">Tool is currently <strong style="color:var(--green);">available</strong> — not checked out to any project.</div>
+            </div>
+          `}
+        </div>
+      </div>
+
+      <!-- CALIBRATION STATUS -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <h3>Calibration Status</h3>
+          <button class="btn btn-sm" onclick="openAddCal('${t.id}')">+ Add Record</button>
+        </div>
+        <div class="section-card-body">
+          ${t.calRequired === 'no' ? `<div style="color:var(--gray);font-size:0.85rem;">Calibration not required for this tool.</div>` : `
+          <div class="cal-strip">
+            <div class="cal-field">
+              <label>Last Calibration</label>
+              <div class="value" style="color:var(--white);">${fmtDate(t.lastCal)}</div>
+            </div>
+            <div class="cal-field">
+              <label>Next Due</label>
+              <div class="value" style="color:${cs && cs.cls === 'overdue' ? 'var(--red)' : cs && cs.cls === 'soon' ? 'var(--amber)' : 'var(--green)'};">
+                ${fmtDate(t.nextCal)}${cs ? ` <small style="opacity:.7;font-size:0.72rem;">(${cs.label})</small>` : ''}
+              </div>
+            </div>
+            <div class="cal-field">
+              <label>Certificate #</label>
+              <div class="value mono" style="font-size:0.82rem;">${t.calCert || '—'}</div>
+            </div>
+            <div class="cal-field">
+              <label>Calibrated By</label>
+              <div class="value" style="font-weight:400;font-size:0.85rem;">${t.calBy || '—'}</div>
+            </div>
+            <div class="cal-field">
+              <label>Interval</label>
+              <div class="value">${t.calInterval ? t.calInterval + ' months' : '—'}</div>
+            </div>
+          </div>
+          `}
+        </div>
+      </div>
+
+      <!-- CAL HISTORY -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <h3>Calibration History</h3>
+          <span style="font-size:0.75rem;color:var(--gray);">${(t.calHistory||[]).length} records</span>
+        </div>
+        <div class="section-card-body" style="padding:0;">
+          <table class="history-table">
+            <thead><tr>
+              <th>Date</th><th>Result</th><th>Certificate #</th><th>By</th><th>Next Due</th><th>Notes</th>
+            </tr></thead>
+            <tbody>${calRows}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ASSIGNMENT HISTORY -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <h3>Assignment History</h3>
+          <span style="font-size:0.75rem;color:var(--gray);">${(t.assignments||[]).length} records</span>
+        </div>
+        <div class="section-card-body" style="padding:0;">
+          <table class="history-table">
+            <thead><tr>
+              <th>Project / Vessel</th><th>Assigned To</th><th>Date Out</th><th>Date In</th><th>Status</th>
+            </tr></thead>
+            <tbody>${assignRows}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="height:1rem;"></div>
+    </div>`;
+}
+
+// ─── ADD / EDIT TOOL ─────────────────────────────────────────────────────────
+function openAddTool() {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'Register New Tool';
+  clearForm(['f_name','f_code','f_category','f_status','f_make','f_model','f_serial','f_location','f_notes','f_calRequired','f_calInterval','f_lastCal','f_nextCal','f_calCert','f_calBy']);
+  document.getElementById('f_code').value = nextCode();
+  document.getElementById('f_status').value = 'available';
+  document.getElementById('f_calRequired').value = 'yes';
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('f_lastCal').value = today;
+  openModal('addToolModal');
+}
+
+function editTool(id) {
+  const t = loadData().find(x => x.id === id);
+  if (!t) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = 'Edit Tool';
+  document.getElementById('f_name').value        = t.name || '';
+  document.getElementById('f_code').value        = t.code || '';
+  document.getElementById('f_category').value    = t.category || '';
+  document.getElementById('f_status').value      = t.status || 'available';
+  document.getElementById('f_make').value        = t.make || '';
+  document.getElementById('f_model').value       = t.model || '';
+  document.getElementById('f_serial').value      = t.serial || '';
+  document.getElementById('f_location').value    = t.location || '';
+  document.getElementById('f_notes').value       = t.notes || '';
+  document.getElementById('f_calRequired').value = t.calRequired || 'yes';
+  document.getElementById('f_calInterval').value = t.calInterval || '';
+  document.getElementById('f_lastCal').value     = t.lastCal || '';
+  document.getElementById('f_nextCal').value     = t.nextCal || '';
+  document.getElementById('f_calCert').value     = t.calCert || '';
+  document.getElementById('f_calBy').value       = t.calBy || '';
+  openModal('addToolModal');
+}
+
+function saveTool() {
+  const name = document.getElementById('f_name').value.trim();
+  const code = document.getElementById('f_code').value.trim();
+  if (!name) { showToast('Tool name is required.', 'amber'); return; }
+  if (!code) { showToast('Tool code is required.', 'amber'); return; }
+
+  const tools = loadData();
+
+  if (editingId) {
+    const idx = tools.findIndex(x => x.id === editingId);
+    if (idx < 0) return;
+    Object.assign(tools[idx], {
+      name, code,
+      category:    document.getElementById('f_category').value,
+      status:      document.getElementById('f_status').value,
+      make:        document.getElementById('f_make').value.trim(),
+      model:       document.getElementById('f_model').value.trim(),
+      serial:      document.getElementById('f_serial').value.trim(),
+      location:    document.getElementById('f_location').value.trim(),
+      notes:       document.getElementById('f_notes').value.trim(),
+      calRequired: document.getElementById('f_calRequired').value,
+      calInterval: parseInt(document.getElementById('f_calInterval').value) || null,
+      lastCal:     document.getElementById('f_lastCal').value,
+      nextCal:     document.getElementById('f_nextCal').value,
+      calCert:     document.getElementById('f_calCert').value.trim(),
+      calBy:       document.getElementById('f_calBy').value.trim(),
+    });
+    saveData(tools);
+    closeModal('addToolModal');
+    showToast('Tool updated.', 'green');
+    renderSidebar();
+    renderDetail(editingId);
+  } else {
+    const newTool = {
+      id: genId(),
+      name, code,
+      category:    document.getElementById('f_category').value,
+      status:      document.getElementById('f_status').value,
+      make:        document.getElementById('f_make').value.trim(),
+      model:       document.getElementById('f_model').value.trim(),
+      serial:      document.getElementById('f_serial').value.trim(),
+      location:    document.getElementById('f_location').value.trim(),
+      notes:       document.getElementById('f_notes').value.trim(),
+      calRequired: document.getElementById('f_calRequired').value,
+      calInterval: parseInt(document.getElementById('f_calInterval').value) || null,
+      lastCal:     document.getElementById('f_lastCal').value,
+      nextCal:     document.getElementById('f_nextCal').value,
+      calCert:     document.getElementById('f_calCert').value.trim(),
+      calBy:       document.getElementById('f_calBy').value.trim(),
+      calHistory:  [],
+      assignments: [],
+      addedOn:     new Date().toISOString().slice(0,10),
+    };
+    tools.push(newTool);
+    saveData(tools);
+    closeModal('addToolModal');
+    showToast('Tool registered: ' + code, 'green');
+    selectTool(newTool.id);
+  }
+}
+
+function deleteTool(id) {
+  if (!confirm('Delete this tool and all its records? This cannot be undone.')) return;
+  const tools = loadData().filter(x => x.id !== id);
+  saveData(tools);
+  activeTool = null;
+  document.getElementById('emptyState').style.display  = 'flex';
+  document.getElementById('detailPanel').style.display = 'none';
+  renderSidebar();
+  showToast('Tool deleted.', 'amber');
+}
+
+// ─── CHECK OUT ────────────────────────────────────────────────────────────────
+let checkOutToolId = null;
+function openCheckOut(id) {
+  checkOutToolId = id;
+  document.getElementById('co_project').value     = '';
+  document.getElementById('co_person').value      = '';
+  document.getElementById('co_notes').value       = '';
+  document.getElementById('co_dateOut').value     = new Date().toISOString().slice(0,10);
+  document.getElementById('co_dateReturn').value  = '';
+  openModal('checkOutModal');
+}
+
+function confirmCheckOut() {
+  const project = document.getElementById('co_project').value.trim();
+  const person  = document.getElementById('co_person').value.trim();
+  if (!project || !person) { showToast('Project and person are required.', 'amber'); return; }
+  const tools = loadData();
+  const t = tools.find(x => x.id === checkOutToolId);
+  if (!t) return;
+  const record = {
+    id: genId(),
+    project, person,
+    dateOut:        document.getElementById('co_dateOut').value,
+    expectedReturn: document.getElementById('co_dateReturn').value,
+    dateIn:         null,
+    notes:          document.getElementById('co_notes').value.trim(),
+  };
+  t.assignments.push(record);
+  t.status = 'checked-out';
+  saveData(tools);
+  closeModal('checkOutModal');
+  showToast(`Checked out to: ${project}`, 'amber');
+  renderSidebar();
+  renderDetail(checkOutToolId);
+}
+
+// ─── CHECK IN ────────────────────────────────────────────────────────────────
+function checkIn(id) {
+  const tools = loadData();
+  const t = tools.find(x => x.id === id);
+  if (!t) return;
+  const active = t.assignments.find(a => !a.dateIn);
+  if (active) active.dateIn = new Date().toISOString().slice(0,10);
+  t.status = 'available';
+  saveData(tools);
+  showToast('Tool checked in — now available.', 'green');
+  renderSidebar();
+  renderDetail(id);
+}
+
+// ─── CALIBRATION RECORD ───────────────────────────────────────────────────────
+let calToolId = null;
+function openAddCal(id) {
+  calToolId = id;
+  const today = new Date().toISOString().slice(0,10);
+  const tools = loadData();
+  const t = tools.find(x => x.id === id);
+  document.getElementById('cal_date').value     = today;
+  document.getElementById('cal_result').value   = 'pass';
+  document.getElementById('cal_cert').value     = '';
+  document.getElementById('cal_by').value       = t ? (t.calBy || '') : '';
+  document.getElementById('cal_notes').value    = '';
+  document.getElementById('cal_interval').value = t ? (t.calInterval || '') : '';
+  // Auto-calc next due
+  if (t && t.calInterval) {
+    const next = new Date(today);
+    next.setMonth(next.getMonth() + t.calInterval);
+    document.getElementById('cal_next').value = next.toISOString().slice(0,10);
+  } else {
+    document.getElementById('cal_next').value = '';
+  }
+  openModal('calModal');
+}
+
+document.getElementById('cal_interval').addEventListener('input', function() {
+  const n = parseInt(this.value);
+  const d = document.getElementById('cal_date').value;
+  if (n && d) {
+    const next = new Date(d);
+    next.setMonth(next.getMonth() + n);
+    document.getElementById('cal_next').value = next.toISOString().slice(0,10);
+  }
+});
+
+function saveCalRecord() {
+  const date = document.getElementById('cal_date').value;
+  if (!date) { showToast('Date is required.', 'amber'); return; }
+  const tools = loadData();
+  const t = tools.find(x => x.id === calToolId);
+  if (!t) return;
+  const rec = {
+    id:      genId(),
+    date,
+    result:  document.getElementById('cal_result').value,
+    cert:    document.getElementById('cal_cert').value.trim(),
+    by:      document.getElementById('cal_by').value.trim(),
+    nextDue: document.getElementById('cal_next').value,
+    notes:   document.getElementById('cal_notes').value.trim(),
+  };
+  if (!t.calHistory) t.calHistory = [];
+  t.calHistory.push(rec);
+  // Update tool's main cal fields
+  t.lastCal  = date;
+  t.nextCal  = rec.nextDue || t.nextCal;
+  t.calCert  = rec.cert    || t.calCert;
+  t.calBy    = rec.by      || t.calBy;
+  if (document.getElementById('cal_interval').value) {
+    t.calInterval = parseInt(document.getElementById('cal_interval').value);
+  }
+  saveData(tools);
+  closeModal('calModal');
+  showToast('Calibration record saved.', 'green');
+  renderSidebar();
+  renderDetail(calToolId);
+}
+
+// ─── MODAL HELPERS ────────────────────────────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => {
+    if (e.target === m) m.classList.remove('open');
+  });
+});
+
+function clearForm(ids) {
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === 'SELECT') el.selectedIndex = 0;
+    else el.value = '';
+  });
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent  = msg;
+  el.className    = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 2800);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+seedData();
+renderSidebar();
+</script>
+</body>
+</html>
