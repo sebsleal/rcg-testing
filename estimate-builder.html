@@ -474,11 +474,11 @@
 
   const EXAMPLE_OUTPUT = `## Service Estimate
 
-**Quote Number:** RCG-EST-2025-0089
+**Quote Number:** MES-EST-2025-0089
 **Date:** March 11, 2025
 **Valid for:** 30 days
 
-**Prepared by:** RCG USA LLC · 8600 NW 36th Street, Suite 100, Miami, FL 33166 · (305) 592-3473
+**Prepared by:** Marine Engineering Solutions · Miami, FL
 **Prepared for:** Caribbean Cruises Ltd.
 **Vessel:** MV Atlantic Star
 **Service Type:** Corrective Maintenance — Fault Investigation &amp; Repair
@@ -489,7 +489,7 @@
 
 Attend vessel at Port of Miami to investigate and repair recurring fault F028 (Cooling Fan Failure) on Main Propulsion VFD Unit 2 (ABB ACS6000, 3.3 MW / 6.6 kV). Scope includes:
 - Full diagnostic inspection of drive cooling fan assembly
-- Replacement of failed fan motor(s) from ship spares or RCG-supplied parts
+- Replacement of failed fan motor(s) from ship spares or company-supplied parts
 - Post-repair functional testing at full load
 - Field service report documenting findings and recommendations
 
@@ -537,7 +537,7 @@ Attend vessel at Port of Miami to investigate and repair recurring fault F028 (C
 | Parts &amp; Materials | $470.00 |
 | **TOTAL ESTIMATE** | **$2,595.00** |
 
-*Note: Final invoice reflects actual hours worked and parts consumed. Parts pricing subject to availability — RCG will confirm prior to ordering.*
+*Note: Final invoice reflects actual hours worked and parts consumed. Parts pricing subject to availability — we will confirm prior to ordering.*
 
 ---
 
@@ -553,7 +553,7 @@ Attend vessel at Port of Miami to investigate and repair recurring fault F028 (C
 
 ## Recommendations
 
-Following repair, RCG recommends inspecting and re-greasing cooling fan bearings on VFD Unit 1 (identical configuration) at next port call. A 4-hour follow-up inspection is estimated at approximately $740.`;
+Following repair, we recommend inspecting and re-greasing cooling fan bearings on VFD Unit 1 (identical configuration) at next port call. A 4-hour follow-up inspection is estimated at approximately $740.`;
 
   function renderMarkdown(text) {
     return text
@@ -670,9 +670,9 @@ Following repair, RCG recommends inspecting and re-greasing cooling fan bearings
     document.getElementById('btnText').textContent = 'Generating...';
 
     const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-    const quoteNum = 'RCG-EST-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random()*9000)+1000);
+    const quoteNum = 'MES-EST-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random()*9000)+1000);
 
-    const systemPrompt = `You are a professional estimator for RCG USA LLC, a marine electrical engineering service company based in Miami, FL.
+    const systemPrompt = `You are a professional estimator for a marine electrical engineering service company.
 Generate a formal, client-ready service estimate using the data provided.
 
 Use ## for section headers. Format all line items with a description on the left and amount on the right, separated by | (pipe character). Include a clear total line at the end.
@@ -686,7 +686,7 @@ Keep the language professional and specific to marine engineering. Do not invent
 
 Quote Number: ${quoteNum}
 Date: ${today}
-From: RCG USA LLC, 8600 NW 36th Street, Suite 100, Miami, FL 33166, (305) 592-3473
+From: Marine Engineering Solutions
 Client: ${clientName}
 Vessel: ${vesselName}
 Service Type: ${jobType}
