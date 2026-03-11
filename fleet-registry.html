@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fleet Registry | Sebastian Leal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #0a0a0c;
+      --navy-mid:   #131316;
+      --navy-light: #1c1c21;
+      --blue:       #14b8a6;
+      --blue-bright:#2dd4bf;
+      --white:      #ededf0;
+      --gray:       #85858f;
+      --gray-light: #b8b8c2;
+      --green:      #4ade80;
+      --red:        #f87171;
+      --amber:      #fbbf24;
+      --border:     rgba(255,255,255,0.07);
+    }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'Inter', system-ui, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      background: rgba(10,10,12,0.95);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-size: 1rem; font-weight: 800; color: var(--white); text-decoration: none; }
+    .nav-logo span { color: var(--blue); }
+    .nav-back { color: var(--gray); text-decoration: none; font-size: 0.875rem; font-weight: 500; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; }
+    .nav-back:hover { color: var(--white); }
+
+    /* LAYOUT */
+    .page { display: flex; height: calc(100vh - 57px); overflow: hidden; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 340px;
+      min-width: 340px;
+      background: var(--navy-mid);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .sidebar-header {
+      padding: 1.25rem 1.25rem 1rem;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .sidebar-header h2 { font-size: 1rem; font-weight: 700; color: var(--white); margin-bottom: 0.75rem; }
+    .search-box {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .search-input {
+      flex: 1;
+      background: var(--navy-light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--white);
+      font-size: 0.82rem;
+      padding: 0.5rem 0.75rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .search-input::placeholder { color: var(--gray); }
+    .search-input:focus { outline: none; border-color: var(--blue); }
+    .add-btn {
+      background: var(--blue);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 0.85rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .add-btn:hover { background: var(--blue-bright); }
+
+    .fleet-list { overflow-y: auto; flex: 1; padding: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .vessel-card {
+      background: var(--navy-light);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .vessel-card:hover { border-color: rgba(20,184,166,0.3); }
+    .vessel-card.active { border-color: var(--blue); background: rgba(20,184,166,0.06); }
+    .vessel-card-name { font-size: 0.9rem; font-weight: 700; color: var(--white); margin-bottom: 0.2rem; }
+    .vessel-card-sub { font-size: 0.75rem; color: var(--gray); margin-bottom: 0.5rem; }
+    .vessel-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+    .vtag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.07);
+      color: var(--gray-light);
+    }
+    .vtag.teal { background: rgba(20,184,166,0.15); color: var(--blue-bright); }
+
+    /* MAIN CONTENT */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* WELCOME */
+    .welcome {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      text-align: center;
+      color: var(--gray);
+      gap: 0.75rem;
+    }
+    .welcome-icon { font-size: 2.5rem; color: var(--blue); font-weight: 800; }
+    .welcome h3 { font-size: 1.1rem; color: var(--gray-light); }
+    .welcome p { font-size: 0.85rem; max-width: 320px; }
+
+    /* VESSEL DETAIL */
+    .detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+    .detail-header-left h1 { font-size: 1.5rem; font-weight: 800; color: var(--white); }
+    .detail-header-left .owner { font-size: 0.875rem; color: var(--gray); margin-top: 0.2rem; }
+    .detail-header-right { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+    .icon-btn {
+      background: var(--navy-light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--gray-light);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.5rem 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .icon-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .icon-btn.danger:hover { border-color: var(--red); color: var(--red); }
+
+    .vessel-meta-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      flex-shrink: 0;
+    }
+    .meta-chip {
+      background: var(--navy-light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.78rem;
+    }
+    .meta-chip-label { color: var(--gray); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.1rem; }
+    .meta-chip-val { color: var(--white); font-weight: 600; }
+
+    /* EQUIPMENT SECTIONS */
+    .eq-section {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .eq-section-header {
+      padding: 0.9rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .eq-section-title { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--blue); }
+    .eq-count { font-size: 0.75rem; color: var(--gray); }
+    .eq-empty { padding: 1rem 1.25rem; font-size: 0.82rem; color: var(--gray); font-style: italic; }
+
+    .eq-item {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.5rem 1rem;
+      align-items: start;
+    }
+    .eq-item:last-child { border-bottom: none; }
+    .eq-item-name { font-size: 0.875rem; font-weight: 600; color: var(--white); }
+    .eq-item-detail { font-size: 0.78rem; color: var(--gray); margin-top: 0.2rem; }
+    .eq-item-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      white-space: nowrap;
+      align-self: start;
+    }
+    .badge-ok { background: rgba(74,222,128,0.12); color: var(--green); }
+    .badge-watch { background: rgba(251,191,36,0.12); color: var(--amber); }
+    .badge-service { background: rgba(248,113,113,0.12); color: var(--red); }
+
+    /* NOTES */
+    .vessel-notes {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      flex-shrink: 0;
+    }
+    .notes-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray); margin-bottom: 0.6rem; }
+    .notes-text { font-size: 0.85rem; color: var(--gray-light); line-height: 1.7; white-space: pre-wrap; }
+
+    /* FORM / MODAL OVERLAY */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .modal-header h3 { font-size: 1rem; font-weight: 700; }
+    .modal-close {
+      background: none; border: none; color: var(--gray); font-size: 1.25rem; cursor: pointer; line-height: 1;
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--white); }
+
+    .modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+
+    /* AI EXTRACT */
+    .ai-extract-box {
+      background: rgba(20,184,166,0.06);
+      border: 1px solid rgba(20,184,166,0.2);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+    .ai-extract-label { font-size: 0.75rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    .ai-extract-desc { font-size: 0.78rem; color: var(--gray); margin-bottom: 0.75rem; }
+    .ai-extract-textarea {
+      width: 100%;
+      background: var(--navy);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--white);
+      font-size: 0.8rem;
+      padding: 0.65rem 0.85rem;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color 0.2s;
+    }
+    .ai-extract-textarea:focus { outline: none; border-color: var(--blue); }
+    .ai-extract-textarea::placeholder { color: var(--gray); }
+    .ai-extract-btn {
+      margin-top: 0.6rem;
+      background: var(--blue);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .ai-extract-btn:hover { background: var(--blue-bright); }
+    .ai-extract-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label { font-size: 0.75rem; font-weight: 600; color: var(--gray-light); }
+    .form-input, .form-select, .form-textarea {
+      background: var(--navy-light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--white);
+      font-size: 0.85rem;
+      padding: 0.6rem 0.85rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .form-select { appearance: none; cursor: pointer; }
+    .form-textarea { resize: vertical; min-height: 70px; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--blue); }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--gray); }
+
+    .form-section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue);
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      grid-column: 1 / -1;
+    }
+
+    .modal-footer {
+      padding: 1.25rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+    .btn-cancel {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--gray-light);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.6rem 1.25rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .btn-cancel:hover { border-color: var(--white); color: var(--white); }
+    .btn-save {
+      background: var(--blue);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.6rem 1.5rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .btn-save:hover { background: var(--blue-bright); }
+
+    /* API KEY BAR */
+    .api-bar {
+      background: var(--navy-mid);
+      border-bottom: 1px solid var(--border);
+      padding: 0.5rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+    .api-bar-label { font-size: 0.72rem; color: var(--gray); white-space: nowrap; }
+    .api-bar-input {
+      background: var(--navy-light);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--white);
+      font-size: 0.78rem;
+      padding: 0.3rem 0.65rem;
+      font-family: 'Courier New', monospace;
+      width: 260px;
+      transition: border-color 0.2s;
+    }
+    .api-bar-input:focus { outline: none; border-color: var(--blue); }
+    .api-bar-input::placeholder { color: var(--gray); }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">SL<span>.</span></a>
+  <a class="nav-back" href="index.html">← Back to Portfolio</a>
+</nav>
+
+<div class="page">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>Fleet Registry</h2>
+      <div class="search-box">
+        <input class="search-input" id="searchInput" type="text" placeholder="Search vessels..." oninput="filterVessels()" />
+        <button class="add-btn" onclick="openAddModal()">+ Add</button>
+      </div>
+    </div>
+    <div class="fleet-list" id="fleetList"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main" id="mainContent">
+    <div class="welcome" id="welcomeScreen">
+      <div class="welcome-icon">FLEET</div>
+      <h3>Select a vessel to view its profile</h3>
+      <p>Track generators, propulsion motors, thrusters, and all major electrical equipment across your fleet.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Add Vessel</h3>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- AI EXTRACT -->
+      <div class="ai-extract-box">
+        <div class="ai-extract-label">AI Equipment Extraction</div>
+        <div class="ai-extract-desc">Paste a vessel spec sheet, handover note, or description — AI will auto-fill the equipment fields below.</div>
+        <textarea class="ai-extract-textarea" id="aiExtractInput" placeholder="e.g. MV Nordic Spirit, LPG tanker, 185m LOA. Main propulsion: MAN B&W 6S50MC-C (9,480 kW). Generators: 3x Caterpillar C32 (800 kW each). Bow thruster: Rolls-Royce TT2200 (2,200 kW). Emergency gen: Volvo TAD1641 (150 kW)..."></textarea>
+        <button class="ai-extract-btn" id="extractBtn" onclick="extractFromDescription()">Extract Equipment with AI</button>
+      </div>
+
+      <!-- VESSEL INFO -->
+      <div class="form-grid">
+        <div class="form-section-title">Vessel Information</div>
+
+        <div class="form-group">
+          <label class="form-label">Vessel Name *</label>
+          <input class="form-input" id="f-name" placeholder="MV Atlantic Star" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Owner / Operator</label>
+          <input class="form-input" id="f-owner" placeholder="Caribbean Cruises Ltd." />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Vessel Type</label>
+          <select class="form-select" id="f-type">
+            <option value="">Select type…</option>
+            <option>Cruise Ship</option>
+            <option>Chemical Tanker</option>
+            <option>LPG Tanker</option>
+            <option>LNG Tanker</option>
+            <option>Crude Oil Tanker</option>
+            <option>Container Ship</option>
+            <option>Bulk Carrier</option>
+            <option>RoRo / Car Carrier</option>
+            <option>Offshore Supply Vessel</option>
+            <option>Drilling Rig</option>
+            <option>Yacht / Superyacht</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Flag / Registry</label>
+          <input class="form-input" id="f-flag" placeholder="Bahamas" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">IMO Number</label>
+          <input class="form-input" id="f-imo" placeholder="9123456" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Year Built</label>
+          <input class="form-input" id="f-year" type="number" placeholder="2018" />
+        </div>
+
+        <!-- PROPULSION -->
+        <div class="form-section-title">Main Propulsion</div>
+        <div class="form-group full">
+          <label class="form-label">Propulsion System</label>
+          <input class="form-input" id="f-propulsion" placeholder="e.g. 2x ABB Azipod XO 14MW, diesel-electric" />
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Main Engine(s) / Prime Mover</label>
+          <input class="form-input" id="f-mainengine" placeholder="e.g. 6x Wärtsilä 16V32 diesel generators (8,000 kW each)" />
+        </div>
+
+        <!-- GENERATORS -->
+        <div class="form-section-title">Generators</div>
+        <div class="form-group full">
+          <label class="form-label">Main Generators</label>
+          <input class="form-input" id="f-generators" placeholder="e.g. 4x Caterpillar C32 800 kW @ 450V, 60Hz" />
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Emergency Generator</label>
+          <input class="form-input" id="f-emgen" placeholder="e.g. 1x Volvo TAD1641GE 150 kW" />
+        </div>
+
+        <!-- THRUSTERS -->
+        <div class="form-section-title">Thrusters</div>
+        <div class="form-group full">
+          <label class="form-label">Bow Thruster(s)</label>
+          <input class="form-input" id="f-bow" placeholder="e.g. 2x Rolls-Royce TT2200 tunnel thruster 2,200 kW" />
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Stern Thruster(s)</label>
+          <input class="form-input" id="f-stern" placeholder="e.g. 1x Kongsberg 900 kW retractable" />
+        </div>
+
+        <!-- ELECTRICAL -->
+        <div class="form-section-title">Electrical Systems</div>
+        <div class="form-group full">
+          <label class="form-label">Main Switchboard</label>
+          <input class="form-input" id="f-msb" placeholder="e.g. ABB MEGAMASTER 6.6kV / 450V" />
+        </div>
+        <div class="form-group full">
+          <label class="form-label">VFDs / Frequency Converters</label>
+          <input class="form-input" id="f-vfd" placeholder="e.g. ABB ACS6000 3.3MW x2 (thruster drives)" />
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Shore Power / Cold Ironing</label>
+          <input class="form-input" id="f-shore" placeholder="e.g. 6.6kV / 60Hz shore connection, 6MVA" />
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Other Notable Equipment</label>
+          <textarea class="form-textarea" id="f-other" placeholder="e.g. UPS systems, battery banks, automation system, HVAC drives…"></textarea>
+        </div>
+
+        <!-- NOTES -->
+        <div class="form-section-title">Service Notes</div>
+        <div class="form-group full">
+          <label class="form-label">Notes / History</label>
+          <textarea class="form-textarea" id="f-notes" style="min-height:90px;" placeholder="Last service dates, known issues, upcoming work…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveVessel()">Save Vessel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ─── DATA ──────────────────────────────────── */
+  const DEFAULT_VESSELS = [
+    {
+      id: 'v1',
+      name: 'MV Atlantic Star',
+      owner: 'Caribbean Cruises Ltd.',
+      type: 'Cruise Ship',
+      flag: 'Bahamas',
+      imo: '9512034',
+      year: '2016',
+      propulsion: '2x ABB Azipod XO propulsion units (14 MW each) — diesel-electric drive',
+      mainengine: '6x Wärtsilä 16V32 diesel prime movers — total installed 48 MW',
+      generators: '4x Wärtsilä 16V32 ship-service generators — 8,000 kW each @ 6.6 kV / 60 Hz',
+      emgen: '1x Caterpillar 3516B — 600 kW @ 450 V — located Deck 12 aft',
+      bow: '2x Wärtsilä tunnel bow thrusters — 2,500 kW each, ABB ACS6000 VFD driven',
+      stern: '1x Kongsberg retractable stern thruster — 1,200 kW',
+      msb: 'ABB MEGAMASTER main switchboard — 6.6 kV ring-bus, 4 sections',
+      vfd: '2x ABB ACS6000 (Azipod drives, 14 MW each) — 2x ABB ACS880 (thruster drives, 2.5 MW each)',
+      shore: '6.6 kV / 60 Hz shore power connection — 10 MVA rated, OPS-compliant',
+      other: 'Kongsberg K-Chief 600 automation system. 2x 400 kVA UPS (comms & nav). Emerson Liebert HVAC drives throughout.',
+      notes: 'Last full electrical survey: Jan 2025 (Miami). Azipod Unit 2 bearing replacement completed March 2024. Next scheduled PM: June 2025 — cooling fan inspection on all 4 main generators.'
+    },
+    {
+      id: 'v2',
+      name: 'MT Nordic Spirit',
+      owner: 'Nordic Tankers ASA',
+      type: 'Chemical Tanker',
+      flag: 'Norway',
+      imo: '9387214',
+      year: '2009',
+      propulsion: 'Single screw — MAN B&W 6S50MC-C direct-drive diesel (9,480 kW)',
+      mainengine: 'MAN B&W 6S50MC-C Mk7 — 9,480 kW @ 127 RPM — CPP shaft arrangement',
+      generators: '3x MAN 6L23/30H diesel generators — 1,080 kW each @ 450 V / 60 Hz',
+      emgen: '1x Caterpillar C18 — 450 kW @ 450 V',
+      bow: '1x Rolls-Royce TT2200 tunnel bow thruster — 2,200 kW, Siemens VFD driven',
+      stern: '',
+      msb: 'Siemens SIVACON 8PT main switchboard — 450 V / 60 Hz, 3-section bus',
+      vfd: '1x Siemens SINAMICS G150 (bow thruster drive, 2.2 MW) — cargo pump VFDs: 4x ABB ACS550 (75 kW each)',
+      shore: '',
+      other: 'Yokogawa CENTUM VP cargo automation system. Inert gas generator: Smit Gas Combustion Services unit. 2x electric cargo pump motors — Siemens 1LA4 series (315 kW each).',
+      notes: 'Bow thruster IGBT fault (F017) reported by crew Jan 2025 — Siemens SINAMICS G150 inverter section requires inspection. Cargo pump VFD #3 replaced Aug 2024. Vessel typically calls Port of Miami every 6–8 weeks.'
+    },
+    {
+      id: 'v3',
+      name: 'MV Ocean Voyager',
+      owner: 'Seaways International',
+      type: 'Container Ship',
+      flag: 'Marshall Islands',
+      imo: '9671840',
+      year: '2019',
+      propulsion: 'Single screw — MAN B&W 9G80ME-C10.5 (35,280 kW) — electronically controlled diesel',
+      mainengine: 'MAN B&W 9G80ME-C10.5 — 35,280 kW @ 79 RPM — direct drive FP propeller',
+      generators: '3x Wärtsilä 6L26 auxiliary generators — 2,100 kW each @ 6.6 kV / 60 Hz',
+      emgen: '1x Volvo TAD1641GE — 200 kW @ 450 V',
+      bow: '1x ABB tunnel bow thruster — 3,000 kW, ABB ACS880 VFD driven',
+      stern: '',
+      msb: 'ABB main switchboard — 6.6 kV / 450 V — USCG-compliant arc flash protection',
+      vfd: '1x ABB ACS880-37 (bow thruster, 3 MW) — ME electronic fuel injection drives: ABB ACH550 series',
+      shore: '6.6 kV / 60 Hz OPS shore power — 8 MVA rated',
+      other: 'ABB Ability Ship Management System. Cold ironing capable. 4x Reefer cargo plug distribution boards — 1,200 x 400 V sockets total.',
+      notes: 'Scheduled call Miami March 2025. No open defects logged. Last dry-dock: Singapore Feb 2024 — propulsion motor cleaned, shaft seal replaced.'
+    }
+  ];
+
+  let vessels = [];
+  let activeId = null;
+  let editingId = null;
+
+  function loadVessels() {
+    const stored = localStorage.getItem('rcg_fleet');
+    vessels = stored ? JSON.parse(stored) : JSON.parse(JSON.stringify(DEFAULT_VESSELS));
+  }
+
+  function saveVessels() {
+    localStorage.setItem('rcg_fleet', JSON.stringify(vessels));
+  }
+
+  /* ─── RENDER FLEET LIST ──────────────────── */
+  function renderFleetList(filter = '') {
+    const list = document.getElementById('fleetList');
+    const filtered = vessels.filter(v =>
+      v.name.toLowerCase().includes(filter.toLowerCase()) ||
+      (v.owner || '').toLowerCase().includes(filter.toLowerCase()) ||
+      (v.type || '').toLowerCase().includes(filter.toLowerCase())
+    );
+    list.innerHTML = '';
+    if (!filtered.length) {
+      list.innerHTML = '<div style="padding:1rem;font-size:0.82rem;color:var(--gray);text-align:center;">No vessels found</div>';
+      return;
+    }
+    filtered.forEach(v => {
+      const div = document.createElement('div');
+      div.className = 'vessel-card' + (v.id === activeId ? ' active' : '');
+      div.onclick = () => showVessel(v.id);
+      const tags = [v.type, v.flag, v.year].filter(Boolean);
+      div.innerHTML = `
+        <div class="vessel-card-name">${v.name}</div>
+        <div class="vessel-card-sub">${v.owner || 'Owner unknown'}</div>
+        <div class="vessel-tags">
+          ${tags.map((t,i) => `<span class="vtag${i===0?' teal':''}">${t}</span>`).join('')}
+        </div>`;
+      list.appendChild(div);
+    });
+  }
+
+  function filterVessels() {
+    renderFleetList(document.getElementById('searchInput').value);
+  }
+
+  /* ─── SHOW VESSEL DETAIL ─────────────────── */
+  function showVessel(id) {
+    activeId = id;
+    renderFleetList(document.getElementById('searchInput').value);
+    const v = vessels.find(x => x.id === id);
+    if (!v) return;
+
+    const eqSections = [
+      { key: 'propulsion',  label: 'Main Propulsion' },
+      { key: 'mainengine',  label: 'Main Engine / Prime Mover' },
+      { key: 'generators',  label: 'Main Generators' },
+      { key: 'emgen',       label: 'Emergency Generator' },
+      { key: 'bow',         label: 'Bow Thruster(s)' },
+      { key: 'stern',       label: 'Stern Thruster(s)' },
+      { key: 'msb',         label: 'Main Switchboard' },
+      { key: 'vfd',         label: 'VFDs / Frequency Converters' },
+      { key: 'shore',       label: 'Shore Power' },
+      { key: 'other',       label: 'Other Notable Equipment' },
+    ];
+
+    const metaChips = [
+      { label: 'Type',    val: v.type  || '—' },
+      { label: 'Flag',    val: v.flag  || '—' },
+      { label: 'IMO',     val: v.imo   || '—' },
+      { label: 'Built',   val: v.year  || '—' },
+    ].map(c => `<div class="meta-chip"><span class="meta-chip-label">${c.label}</span><span class="meta-chip-val">${c.val}</span></div>`).join('');
+
+    const sectionsHtml = eqSections.map(s => {
+      const val = v[s.key] ? v[s.key].trim() : '';
+      const itemsHtml = val
+        ? val.split('\n').filter(l => l.trim()).map(line => `
+            <div class="eq-item">
+              <div>
+                <div class="eq-item-name">${line.trim()}</div>
+              </div>
+            </div>`).join('')
+        : `<div class="eq-empty">Not recorded</div>`;
+      return `
+        <div class="eq-section">
+          <div class="eq-section-header">
+            <span class="eq-section-title">${s.label}</span>
+          </div>
+          ${itemsHtml}
+        </div>`;
+    }).join('');
+
+    const notesHtml = v.notes ? `
+      <div class="vessel-notes">
+        <div class="notes-label">Service Notes</div>
+        <div class="notes-text">${v.notes}</div>
+      </div>` : '';
+
+    document.getElementById('mainContent').innerHTML = `
+      <div class="detail-header">
+        <div class="detail-header-left">
+          <h1>${v.name}</h1>
+          <div class="owner">${v.owner || ''}</div>
+        </div>
+        <div class="detail-header-right">
+          <button class="icon-btn" onclick="openEditModal('${v.id}')">Edit</button>
+          <button class="icon-btn danger" onclick="deleteVessel('${v.id}')">Delete</button>
+        </div>
+      </div>
+      <div class="vessel-meta-strip">${metaChips}</div>
+      ${sectionsHtml}
+      ${notesHtml}
+    `;
+  }
+
+  /* ─── ADD / EDIT MODAL ───────────────────── */
+  function openAddModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = 'Add Vessel';
+    clearForm();
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function openEditModal(id) {
+    editingId = id;
+    const v = vessels.find(x => x.id === id);
+    if (!v) return;
+    document.getElementById('modalTitle').textContent = 'Edit Vessel';
+    fillForm(v);
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.getElementById('aiExtractInput').value = '';
+    editingId = null;
+  }
+
+  function clearForm() {
+    ['name','owner','type','flag','imo','year','propulsion','mainengine',
+     'generators','emgen','bow','stern','msb','vfd','shore','other','notes']
+      .forEach(k => {
+        const el = document.getElementById('f-' + k);
+        if (el) el.value = '';
+      });
+  }
+
+  function fillForm(v) {
+    ['name','owner','type','flag','imo','year','propulsion','mainengine',
+     'generators','emgen','bow','stern','msb','vfd','shore','other','notes']
+      .forEach(k => {
+        const el = document.getElementById('f-' + k);
+        if (el) el.value = v[k] || '';
+      });
+  }
+
+  function saveVessel() {
+    const name = document.getElementById('f-name').value.trim();
+    if (!name) { alert('Vessel name is required.'); return; }
+
+    const data = {};
+    ['name','owner','type','flag','imo','year','propulsion','mainengine',
+     'generators','emgen','bow','stern','msb','vfd','shore','other','notes']
+      .forEach(k => { data[k] = (document.getElementById('f-' + k).value || '').trim(); });
+
+    if (editingId) {
+      const idx = vessels.findIndex(v => v.id === editingId);
+      if (idx !== -1) vessels[idx] = { ...vessels[idx], ...data };
+    } else {
+      data.id = 'v' + Date.now();
+      vessels.unshift(data);
+    }
+    saveVessels();
+    renderFleetList(document.getElementById('searchInput').value);
+    closeModal();
+    showVessel(editingId || vessels[0].id);
+  }
+
+  function deleteVessel(id) {
+    if (!confirm('Remove this vessel from the registry?')) return;
+    vessels = vessels.filter(v => v.id !== id);
+    activeId = null;
+    saveVessels();
+    renderFleetList();
+    document.getElementById('mainContent').innerHTML = `
+      <div class="welcome" id="welcomeScreen">
+        <div class="welcome-icon">FLEET</div>
+        <h3>Select a vessel to view its profile</h3>
+        <p>Track generators, propulsion motors, thrusters, and all major electrical equipment across your fleet.</p>
+      </div>`;
+  }
+
+  /* ─── AI EXTRACTION ──────────────────────── */
+  async function extractFromDescription() {
+    const text = document.getElementById('aiExtractInput').value.trim();
+    if (!text) return;
+
+    const apiKey = document.getElementById('apiKeyInput') ? document.getElementById('apiKeyInput').value.trim() : '';
+
+    const btn = document.getElementById('extractBtn');
+    btn.disabled = true;
+    btn.textContent = 'Extracting…';
+
+    // Demo mode
+    if (!apiKey) {
+      setTimeout(() => {
+        fillForm({
+          name: 'MV Nordic Spirit',
+          owner: 'Nordic Tankers ASA',
+          type: 'LPG Tanker',
+          flag: '',
+          imo: '',
+          year: '',
+          propulsion: 'MAN B&W 6S50MC-C direct-drive diesel (9,480 kW)',
+          mainengine: 'MAN B&W 6S50MC-C — 9,480 kW @ 127 RPM',
+          generators: '3x Caterpillar C32 — 800 kW each',
+          emgen: 'Volvo TAD1641 — 150 kW',
+          bow: 'Rolls-Royce TT2200 — 2,200 kW',
+          stern: '',
+          msb: '',
+          vfd: '',
+          shore: '',
+          other: '',
+          notes: ''
+        });
+        btn.disabled = false;
+        btn.textContent = 'Extract Equipment with AI';
+      }, 1200);
+      return;
+    }
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-allow-browser': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1024,
+          messages: [{
+            role: 'user',
+            content: `Extract vessel equipment details from the following description and return ONLY a JSON object with these exact keys (use empty string if not mentioned):
+name, owner, type, flag, imo, year, propulsion, mainengine, generators, emgen, bow, stern, msb, vfd, shore, other, notes
+
+Description:
+${text}
+
+Return only valid JSON, no markdown, no explanation.`
+          }]
+        })
+      });
+      const data = await res.json();
+      const raw = data.content[0].text.trim();
+      const parsed = JSON.parse(raw.replace(/^```json\n?/, '').replace(/\n?```$/, ''));
+      fillForm(parsed);
+    } catch (e) {
+      alert('Extraction failed. Check your API key and try again.');
+    }
+    btn.disabled = false;
+    btn.textContent = 'Extract Equipment with AI';
+  }
+
+  /* ─── INIT ───────────────────────────────── */
+  loadVessels();
+  renderFleetList();
+
+  // Add API key input to modal body
+  const apiBar = document.createElement('div');
+  apiBar.className = 'api-bar';
+  apiBar.innerHTML = `
+    <span class="api-bar-label">Claude API Key (for AI extraction):</span>
+    <input class="api-bar-input" id="apiKeyInput" type="password" placeholder="sk-ant-api03-… (optional)" />
+    <span class="api-bar-label" style="color:var(--blue);font-size:0.68rem;">No key? Demo mode fills fields automatically.</span>
+  `;
+  document.querySelector('.modal-body').prepend(
+    (() => { const d = document.createElement('div'); d.appendChild(apiBar); return d.firstChild; })()
+  );
+  // Actually insert before the ai-extract-box
+  const extractBox = document.querySelector('.ai-extract-box');
+  extractBox.parentNode.insertBefore(apiBar, extractBox);
+
+  // Show first vessel by default
+  if (vessels.length) showVessel(vessels[0].id);
+</script>
+</body>
+</html>
