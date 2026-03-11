@@ -384,7 +384,7 @@
   <!-- ─── INPUT PANEL ─────────────────────── -->
   <div class="panel form-panel">
     <div class="panel-header">
-      <span class="panel-icon">📋</span>
+      <span class="panel-icon">RPT</span>
       <div>
         <div class="panel-title">Field Report Generator</div>
         <div class="panel-sub">Enter job details → get a professional report</div>
@@ -394,7 +394,7 @@
     <!-- Example banner -->
     <div class="example-banner">
       <p><strong>No API key?</strong> Load a realistic example to see the output instantly.</p>
-      <button class="example-btn" onclick="loadExample()">✦ Try Example</button>
+      <button class="example-btn" onclick="loadExample()">Try Example</button>
     </div>
 
     <!-- API Key -->
@@ -486,7 +486,7 @@ Arrived 0800. Found main propulsion VFD showing fault F028. Checked cooling fans
   <!-- ─── OUTPUT PANEL ─────────────────────── -->
   <div class="panel output-panel">
     <div class="panel-header">
-      <span class="panel-icon">📄</span>
+      <span class="panel-icon">OUT</span>
       <div>
         <div class="panel-title">Generated Report</div>
         <div class="panel-sub">Professional output, ready to share</div>
@@ -495,7 +495,7 @@ Arrived 0800. Found main propulsion VFD showing fault F028. Checked cooling fans
 
     <div class="output-body">
       <div class="output-placeholder" id="placeholder">
-        <span class="ph-icon">📋</span>
+        <span class="ph-icon">RPT</span>
         <p>Fill in the job details and click <strong>Generate Report</strong>, or click <strong>Try Example</strong> to see a sample output instantly — no API key needed.</p>
       </div>
 
@@ -504,13 +504,13 @@ Arrived 0800. Found main propulsion VFD showing fault F028. Checked cooling fans
         <span>Generating report...</span>
       </div>
 
-      <div id="exampleBadge" style="display:none;" class="example-badge">✦ Example Output</div>
+      <div id="exampleBadge" style="display:none;" class="example-badge">Example Output</div>
       <div class="report-output" id="reportOutput"></div>
     </div>
 
     <div class="output-actions" id="outputActions">
-      <button class="action-btn print" onclick="window.print()">🖨 Print / Save PDF</button>
-      <button class="action-btn copy" onclick="copyReport()">📋 Copy Text</button>
+      <button class="action-btn print" onclick="window.print()">Print / Save PDF</button>
+      <button class="action-btn copy" onclick="copyReport()">Copy Text</button>
     </div>
   </div>
 
@@ -730,7 +730,7 @@ ${jobNotes}`;
     navigator.clipboard.writeText(text).then(() => {
       const btn = document.querySelector('.action-btn.copy');
       btn.textContent = '✓ Copied!';
-      setTimeout(() => { btn.textContent = '📋 Copy Text'; }, 2000);
+      setTimeout(() => { btn.textContent = 'Copy Text'; }, 2000);
     });
   }
 </script>

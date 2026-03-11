@@ -406,7 +406,7 @@
   <!-- ─── SIDEBAR ──────────────────────────── -->
   <div class="sidebar">
     <div>
-      <h2>⚡ Diagnostic Chat</h2>
+      <h2>Diagnostic Chat</h2>
       <p class="sidebar-sub">Describe a fault or symptom on marine electrical equipment and get structured diagnostic guidance.</p>
     </div>
 
@@ -460,7 +460,7 @@
 
     <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:1rem;">
       <span class="quick-label">No API Key?</span>
-      <button class="example-demo-btn" onclick="loadDemoConversation()">✦ Load Demo Conversation</button>
+      <button class="example-demo-btn" onclick="loadDemoConversation()">Load Demo Conversation</button>
       <p style="font-size:0.72rem;color:var(--gray);margin-top:0.5rem;line-height:1.5;">See a full realistic diagnostic session — no API key needed.</p>
     </div>
 
@@ -471,7 +471,7 @@
   <div class="chat-area">
     <div class="messages" id="messages">
       <div class="welcome" id="welcome">
-        <div class="welcome-icon">⚡</div>
+        <div class="welcome-icon">AI</div>
         <h3>Marine Equipment Diagnostic Assistant</h3>
         <p>
           Describe a fault, symptom, or alarm on any marine electrical equipment.
@@ -558,7 +558,7 @@ If the equipment type is mentioned, tailor your guidance to that specific equipm
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/^- (.+)$/gm, '<li>$1</li>')
       .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`)
-      .replace(/⚠️(.+)/g, '<div class="warn">⚠️$1</div>')
+      .replace(/WARNING:(.+)/g, '<div class="warn">WARNING:$1</div>')
       .replace(/^(?!<[hul])(.+)$/gm, '<p>$1</p>')
       .replace(/<p><\/p>/g, '');
   }
@@ -574,7 +574,7 @@ If the equipment type is mentioned, tailor your guidance to that specific equipm
 
     const avatar = document.createElement('div');
     avatar.className = 'msg-avatar';
-    avatar.textContent = role === 'user' ? 'SL' : '⚡';
+    avatar.textContent = role === 'user' ? 'SL' : 'AI';
 
     const bubble = document.createElement('div');
     bubble.className = 'msg-bubble';
@@ -603,7 +603,7 @@ If the equipment type is mentioned, tailor your guidance to that specific equipm
 
     const avatar = document.createElement('div');
     avatar.className = 'msg-avatar';
-    avatar.textContent = '⚡';
+    avatar.textContent = 'AI';
 
     const bubble = document.createElement('div');
     bubble.className = 'msg-bubble';
@@ -712,7 +712,7 @@ If the equipment type is mentioned, tailor your guidance to that specific equipm
 
 4. **Check inverter module temperatures** — ACS6000 logs individual IGBT module temps. An L2 module running hotter than the others at equivalent load is a strong IGBT fault indicator.
 
-⚠️ Do not run the drive at full load until root cause is confirmed — a failing IGBT can cascade and take out the full inverter section.
+WARNING: Do not run the drive at full load until root cause is confirmed — a failing IGBT can cascade and take out the full inverter section.
 
 What does the fault log show for L2 current at trip? That's the most useful next data point.`
     },
@@ -749,7 +749,7 @@ The 5A imbalance at 10% jog (≈4.7% deviation from mean) is **above the 3% thre
 
 You can likely operate at **reduced load (≤80% rated)** with close monitoring — the 148% trip suggests the actual current margin is wider than the trip point implies if the CT is at fault. However, confirm with your Chief Engineer and classification society surveyor before departure.
 
-⚠️ Do not attempt to raise the overcurrent trip threshold as a workaround — this masks the underlying issue and removes a critical protection.
+WARNING: Do not attempt to raise the overcurrent trip threshold as a workaround — this masks the underlying issue and removes a critical protection.
 
 Would you like guidance on the CT swap procedure for the ACS6000?`
     }
@@ -763,7 +763,7 @@ Would you like guidance on the CT swap procedure for the ACS6000?`
     const messagesEl = document.getElementById('messages');
     const notice = document.createElement('div');
     notice.className = 'demo-notice';
-    notice.innerHTML = '✦ Demo Mode — example conversation, no API key required';
+    notice.innerHTML = 'Demo Mode — example conversation, no API key required';
     messagesEl.appendChild(notice);
 
     // Play conversation with delays
@@ -787,7 +787,7 @@ Would you like guidance on the CT swap procedure for the ACS6000?`
     const messagesEl = document.getElementById('messages');
     messagesEl.innerHTML = `
       <div class="welcome" id="welcome">
-        <div class="welcome-icon">⚡</div>
+        <div class="welcome-icon">AI</div>
         <h3>Marine Equipment Diagnostic Assistant</h3>
         <p>
           Describe a fault, symptom, or alarm on any marine electrical equipment.

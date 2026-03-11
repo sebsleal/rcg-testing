@@ -6,7 +6,7 @@
   <title>Sebastian Leal | AI Solutions for Marine Engineering</title>
   <meta name="description" content="Sebastian Leal builds AI-powered tools for marine and industrial engineering workflows — cutting report time, improving diagnostics, and automating documentation." />
   <meta property="og:title" content="Sebastian Leal | AI Solutions for Marine Engineering" />
-  <meta property="og:description" content="Live AI demos built specifically for marine engineering workflows — field report generation, equipment diagnostics, and technical manual Q&A." />
+  <meta property="og:description" content="5 live AI demos built specifically for marine engineering workflows — field reports, diagnostics, manual Q&A, maintenance checklists, and job estimates." />
   <meta property="og:type" content="website" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%230a0a0c'/><text x='50' y='68' font-family='Inter,system-ui,sans-serif' font-size='44' font-weight='800' fill='%232dd4bf' text-anchor='middle'>SL</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -544,6 +544,41 @@
       40%            { transform: translateY(-4px); opacity: 1; }
     }
 
+    /* Time-saved badge */
+    .demo-time-save {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(45,212,191,0.06);
+      border: 1px solid rgba(45,212,191,0.12);
+      border-radius: 0.4rem;
+      padding: 0.45rem 0.75rem;
+      font-size: 0.76rem;
+      color: var(--gray);
+      margin-bottom: 1.25rem;
+    }
+    .demo-time-save strong { color: var(--blue-bright); }
+
+    /* Checklist mockup */
+    .cp-checklist { display: flex; flex-direction: column; gap: 0.35rem; }
+    .cp-check-row { display: flex; align-items: center; gap: 0.5rem; }
+    .cp-checkbox { width: 8px; height: 8px; border: 1px solid rgba(45,212,191,0.4); border-radius: 1px; flex-shrink: 0; }
+    .cp-checkbox.done { background: var(--blue-bright); border-color: var(--blue-bright); }
+    .cp-check-line { height: 5px; border-radius: 2px; background: rgba(255,255,255,0.1); flex: 1; }
+    .cp-section-head { height: 6px; width: 55%; background: rgba(45,212,191,0.35); border-radius: 2px; margin: 0.3rem 0 0.15rem; }
+
+    /* Estimate mockup */
+    .cp-estimate { display: flex; flex-direction: column; gap: 0.35rem; }
+    .cp-est-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; }
+    .cp-est-title { height: 7px; width: 50%; background: rgba(255,255,255,0.2); border-radius: 2px; }
+    .cp-est-num { height: 5px; width: 30%; background: rgba(45,212,191,0.3); border-radius: 2px; }
+    .cp-est-row { display: flex; justify-content: space-between; align-items: center; padding: 0.2rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .cp-est-desc { height: 5px; flex: 1; background: rgba(255,255,255,0.08); border-radius: 2px; margin-right: 0.75rem; }
+    .cp-est-amt { height: 5px; width: 20%; background: rgba(255,255,255,0.15); border-radius: 2px; }
+    .cp-est-total { display: flex; justify-content: space-between; align-items: center; padding: 0.3rem 0; border-top: 2px solid rgba(45,212,191,0.3); margin-top: 0.2rem; }
+    .cp-est-total-label { height: 6px; width: 35%; background: rgba(255,255,255,0.2); border-radius: 2px; }
+    .cp-est-total-amt { height: 7px; width: 22%; background: rgba(45,212,191,0.6); border-radius: 2px; }
+
     /* Q&A Manual mockup */
     .cp-doc { display: flex; flex-direction: column; gap: 0.4rem; }
     .cp-search-bar {
@@ -849,7 +884,7 @@
   <div class="stats-inner">
     <div class="stat-item">
       <div class="stat-dot"></div>
-      <span><span class="stat-val">2</span> Live Working Demos</span>
+      <span><span class="stat-val">5</span> Live Working Demos</span>
     </div>
     <div class="stat-item">
       <div class="stat-dot"></div>
@@ -978,6 +1013,7 @@
             <li>Outputs formatted, printable report</li>
             <li>Covers findings, work performed &amp; recommendations</li>
           </ul>
+          <div class="demo-time-save">Report time: <strong>45 min → under 2 min</strong></div>
           <a href="report-generator.html" class="demo-link">Try the demo →</a>
         </div>
       </div>
@@ -1011,13 +1047,13 @@
             <li>Structured fault checks &amp; next steps</li>
             <li>Fast, mobile-friendly interface</li>
           </ul>
+          <div class="demo-time-save">Fault triage: <strong>hours of guesswork → minutes</strong></div>
           <a href="diagnostic-chat.html" class="demo-link">Try the demo →</a>
         </div>
       </div>
 
       <!-- Card 3: Technical Manual Q&A -->
       <div class="demo-card reveal reveal-delay-3">
-        <!-- Mini UI mockup -->
         <div class="card-preview">
           <div class="cp-doc">
             <div class="cp-search-bar">
@@ -1034,7 +1070,7 @@
                   <div class="cp-doc-highlight-line" style="width:45%"></div>
                 </div>
               </div>
-              <div class="cp-page-tag">↗ Page 247</div>
+              <div class="cp-page-tag">↗ Section 4.2</div>
             </div>
           </div>
         </div>
@@ -1042,18 +1078,93 @@
           <div class="demo-icon-wrap">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><circle cx="14" cy="10" r="2"/><path d="m16 12 2 2"/></svg>
           </div>
-          <span class="demo-tag tag-coming">Coming Soon</span>
+          <span class="demo-tag tag-live">Live Demo</span>
           <h3>Technical Manual Q&amp;A</h3>
           <p>
-            Upload any equipment manual and ask it questions in plain English.
-            No more scrolling through 400-page PDFs on board a vessel.
+            Ask questions about any equipment manual in plain English.
+            Pre-loaded with ABB, CAT, and Siemens marine drive excerpts.
           </p>
           <ul class="demo-features">
-            <li>Upload any PDF manual</li>
-            <li>Ask questions in plain language</li>
-            <li>Cites exact page numbers in every answer</li>
+            <li>3 pre-loaded marine equipment manuals</li>
+            <li>Paste your own document text</li>
+            <li>Answers cite exact specs from the document</li>
           </ul>
-          <a href="#contact" class="demo-link">Get notified when it's ready →</a>
+          <div class="demo-time-save">Manual lookup: <strong>hours of reading → seconds</strong></div>
+          <a href="manual-qa.html" class="demo-link">Try the demo →</a>
+        </div>
+      </div>
+
+      <!-- Card 4: Maintenance Checklist Generator -->
+      <div class="demo-card reveal reveal-delay-1">
+        <div class="card-preview">
+          <div class="cp-checklist">
+            <div class="cp-section-head"></div>
+            <div class="cp-check-row"><div class="cp-checkbox done"></div><div class="cp-check-line" style="width:85%"></div></div>
+            <div class="cp-check-row"><div class="cp-checkbox done"></div><div class="cp-check-line" style="width:70%"></div></div>
+            <div class="cp-check-row"><div class="cp-checkbox"></div><div class="cp-check-line" style="width:90%"></div></div>
+            <div class="cp-section-head"></div>
+            <div class="cp-check-row"><div class="cp-checkbox"></div><div class="cp-check-line" style="width:75%"></div></div>
+            <div class="cp-check-row"><div class="cp-checkbox"></div><div class="cp-check-line" style="width:60%"></div></div>
+            <div class="cp-check-row"><div class="cp-checkbox"></div><div class="cp-check-line" style="width:80%"></div></div>
+            <div class="cp-section-head"></div>
+            <div class="cp-check-row"><div class="cp-checkbox"></div><div class="cp-check-line" style="width:65%"></div></div>
+          </div>
+        </div>
+        <div class="demo-card-body">
+          <div class="demo-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <span class="demo-tag tag-live">Live Demo</span>
+          <h3>Maintenance Checklist Generator</h3>
+          <p>
+            Select vessel type, equipment, and service interval — get a complete,
+            interactive inspection checklist ready to print or work through on site.
+          </p>
+          <ul class="demo-features">
+            <li>Covers VFDs, motors, generators, switchgear &amp; more</li>
+            <li>Checkable items with live progress tracking</li>
+            <li>Safety LOTO steps always included first</li>
+          </ul>
+          <div class="demo-time-save">Checklist creation: <strong>30 min → under 1 min</strong></div>
+          <a href="checklist-generator.html" class="demo-link">Try the demo →</a>
+        </div>
+      </div>
+
+      <!-- Card 5: Job Estimate Builder -->
+      <div class="demo-card reveal reveal-delay-2">
+        <div class="card-preview">
+          <div class="cp-estimate">
+            <div class="cp-est-header">
+              <div class="cp-est-title"></div>
+              <div class="cp-est-num"></div>
+            </div>
+            <div class="cp-est-row"><div class="cp-est-desc" style="width:60%"></div><div class="cp-est-amt"></div></div>
+            <div class="cp-est-row"><div class="cp-est-desc" style="width:75%"></div><div class="cp-est-amt"></div></div>
+            <div class="cp-est-row"><div class="cp-est-desc" style="width:50%"></div><div class="cp-est-amt"></div></div>
+            <div class="cp-est-row"><div class="cp-est-desc" style="width:65%"></div><div class="cp-est-amt"></div></div>
+            <div class="cp-est-total">
+              <div class="cp-est-total-label"></div>
+              <div class="cp-est-total-amt"></div>
+            </div>
+          </div>
+        </div>
+        <div class="demo-card-body">
+          <div class="demo-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <span class="demo-tag tag-live">Live Demo</span>
+          <h3>Job Estimate Builder</h3>
+          <p>
+            Enter labor hours, expenses, and parts — get a professional,
+            itemized client quote with scope of work and payment terms.
+          </p>
+          <ul class="demo-features">
+            <li>Itemized labor, expenses &amp; parts breakdown</li>
+            <li>Auto-calculates totals</li>
+            <li>Professional scope-of-work language generated</li>
+          </ul>
+          <div class="demo-time-save">Quote creation: <strong>senior engineer time → automated</strong></div>
+          <a href="estimate-builder.html" class="demo-link">Try the demo →</a>
         </div>
       </div>
 
@@ -1142,9 +1253,11 @@
   <div class="footer-inner">
     <div class="footer-brand">SL<span>.</span> Sebastian Leal</div>
     <ul class="footer-links">
-      <li><a href="#problem">The Problem</a></li>
       <li><a href="report-generator.html">Report Generator</a></li>
       <li><a href="diagnostic-chat.html">Diagnostic Chat</a></li>
+      <li><a href="manual-qa.html">Manual Q&amp;A</a></li>
+      <li><a href="checklist-generator.html">Checklists</a></li>
+      <li><a href="estimate-builder.html">Estimates</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
     <div class="footer-copy">© 2026 · Miami, Florida · inquire.sebastian@gmail.com</div>
